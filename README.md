@@ -1,5 +1,8 @@
 # MCP Server Trello
 
+> **This is a Brainquiver fork.** Upstream is https://github.com/delorenj/mcp-server-trello, and the fork was taken at commit `737292fec08d80ad706538bd27230151c21686a5` dated 2026-09-15, which the `fork-point` tag marks. Run `git diff fork-point..HEAD` to see everything we changed, and `git fetch upstream && git log HEAD..upstream/main` to see what upstream has done since. We keep this fork to cut the tool surface and the scaffolding, not to add features, so an upstream fix is worth cherry-picking. The text below is upstream's and describes the unmodified server.
+
+
 [![Verified on MseeP](https://mseep.ai/badge.svg)](https://mseep.ai/app/27359682-7632-4ba7-981d-7dfecadf1c4b)
 [![MCP Registry](https://img.shields.io/badge/MCP-Registry-blue)](https://registry.modelcontextprotocol.io/servers/io.github.delorenj/mcp-server-trello)
 [![npm version](https://badge.fury.io/js/%40delorenj%2Fmcp-server-trello.svg)](https://badge.fury.io/js/%40delorenj%2Fmcp-server-trello)
