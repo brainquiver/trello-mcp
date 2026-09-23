@@ -1,80 +1,34 @@
 # Dependencies
 node_modules/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
 
 # Build output
 build/
 dist/
 *.tsbuildinfo
 
-# IDE and editor files
-.idea/
-.vscode/
-*.swp
-*.swo
-*~
-
-# Environment variables
-.env
-.env.local
-.env.*.local
-
-# Local Codex state and credentials
-.codex/
-
-# Operating System
-.DS_Store
-Thumbs.db
-
 # Test coverage
 coverage/
 
 # Logs
-logs/
 *.log
 
-
-# Claude Flow generated files
-.claude/settings.local.json
-.mcp.json
-claude-flow.config.json
-.swarm/
-.hive-mind/
-memory/claude-flow-data.json
-memory/sessions/*
-!memory/sessions/README.md
-memory/agents/*
-!memory/agents/README.md
-coordination/memory_bank/*
-coordination/subtasks/*
-coordination/orchestration/*
-*.db
-*.db-journal
-*.db-wal
-*.sqlite
-*.sqlite-journal
-*.sqlite-wal
-claude-flow
-claude-flow.bat
-claude-flow.ps1
-hive-mind-prompt-*.txt
-validate-server.cjs
-mcp-publisher
-**/system-metrics.json
-
-# MCP Registry tokens (secrets)
-.mcpregistry_github_token
-.mcpregistry_registry_token
-.claude-flow/data/
-.claude-flow/metrics/**/*
-
-# pr-crusher runtime artifact (local backlog state, not tracked)
-.pr-snapshot.md
-
-# Secrets — .env is materialized by `op inject -i .env.op > .env` on mise enter.
-# NEVER commit it. .env.op holds only 1Password references or safe literals and IS committed.
+# Environment. example.env is committed and holds no value.
 .env
 .env.*
-!.env.op
+
+# Local MCP client config, which is machine state and points at the drive registry.
+.mcp.json
+
+# Editors and the operating system, including the AppleDouble sidecar exFAT writes.
+.idea/
+.vscode/
+*.swp
+*~
+.DS_Store
+._*
+
+# Working documents at the root. Only the readme and the licence are ever committed.
+/*.md
+!/README.md
+!/LICENSE.md
+!/LICENCE.md

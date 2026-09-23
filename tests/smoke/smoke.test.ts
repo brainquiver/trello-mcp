@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any -- replies are free-form JSON, checked field by field with expect */
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { spawn, ChildProcess } from 'child_process';
 import path from 'path';
@@ -72,12 +73,10 @@ class McpTestClient {
   }
 
   private request(method: string, params: Record<string, unknown>): Promise<any> {
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       const id = ++this.requestId;
       this.pending.set(id, resolve);
-      this.server.stdin!.write(
-        JSON.stringify({ jsonrpc: '2.0', id, method, params }) + '\n'
-      );
+      this.server.stdin!.write(JSON.stringify({ jsonrpc: '2.0', id, method, params }) + '\n');
     });
   }
 
@@ -194,7 +193,6 @@ describe.skipIf(!canRunSmoke)('Smoke Tests (Live Trello API)', () => {
 
   describe('Checklist operations', () => {
     let cardId: string;
-    let checklistId: string;
 
     beforeAll(async () => {
       const card = await client.callTool('add_card_to_list', {
@@ -212,7 +210,6 @@ describe.skipIf(!canRunSmoke)('Smoke Tests (Live Trello API)', () => {
       });
       expect(checklist).toHaveProperty('id');
       expect(checklist.name).toBe('Test Checklist');
-      checklistId = checklist.id;
     });
 
     it('should add items to checklist', async () => {
@@ -395,7 +392,7 @@ describe.skipIf(!canRunSmoke)('Smoke Tests (Live Trello API)', () => {
         ],
       });
       expect(result.created).toHaveLength(3);
-      expect(result.errors).toHaveLength(0);
+      expect(result.stopped).toBeUndefined();
       expect(result.created[0].name).toBe('Batch 1');
       expect(result.created[1].name).toBe('Batch 2');
       expect(result.created[2].name).toBe('Batch 3');
