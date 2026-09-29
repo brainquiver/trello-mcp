@@ -744,13 +744,15 @@ describe('TrelloClient', () => {
       expect(mockAxiosInstance.get).toHaveBeenCalledWith('/boards/b1/members');
     });
 
-    it('assignMemberToCard should post member', async () => {
-      mockAxiosInstance.post.mockResolvedValue({ data: { id: 'c1' } });
+    it('assignMemberToCard should post member and return the members on the card', async () => {
+      const members = [{ id: 'm1', username: 'ada', fullName: 'Ada' }];
+      mockAxiosInstance.post.mockResolvedValue({ data: members });
 
       const client = createClient();
-      await client.assignMemberToCard('c1', 'm1');
+      const result = await client.assignMemberToCard('c1', 'm1');
 
       expect(mockAxiosInstance.post).toHaveBeenCalledWith('/cards/c1/idMembers', { value: 'm1' });
+      expect(result).toEqual(members);
     });
 
     it('removeMemberFromCard should delete member', async () => {

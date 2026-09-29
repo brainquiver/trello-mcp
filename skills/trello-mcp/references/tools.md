@@ -131,8 +131,8 @@ A member is a person with access to the board.
 | Tool | Required | Optional | Result |
 | --- | --- | --- | --- |
 | **`get_board_members`** | | `boardId`, `raw` | The members of a board, with their IDs. |
-| **`assign_member_to_card`** | `cardId`, `memberId` | | The card with the member on it. |
-| **`remove_member_from_card`** | `cardId`, `memberId` | | The card, with that member removed. |
+| **`assign_member_to_card`** | `cardId`, `memberId` | | The members on the card, the new member included. |
+| **`remove_member_from_card`** | `cardId`, `memberId` | | The members that stay on the card. |
 
 ## 10. Custom Fields
 

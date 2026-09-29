@@ -38,7 +38,7 @@ export function registerMemberTools(server: McpServer, client: TrelloClient): vo
       },
     },
     async ({ cardId, memberId }) =>
-      json(() => client.assignMemberToCard(cardId, memberId), shape.card)
+      json(() => client.assignMemberToCard(cardId, memberId), shape.many(shape.member))
   );
 
   server.registerTool(
@@ -51,6 +51,7 @@ export function registerMemberTools(server: McpServer, client: TrelloClient): vo
         memberId: z.string().describe('ID of the member to remove from the card'),
       },
     },
-    async ({ cardId, memberId }) => json(() => client.removeMemberFromCard(cardId, memberId))
+    async ({ cardId, memberId }) =>
+      json(() => client.removeMemberFromCard(cardId, memberId), shape.many(shape.member))
   );
 }

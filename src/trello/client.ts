@@ -828,7 +828,8 @@ export class TrelloClient {
     });
   }
 
-  async assignMemberToCard(cardId: string, memberId: string): Promise<TrelloCard> {
+  /** Trello replies with the members on the card, the new member included. */
+  async assignMemberToCard(cardId: string, memberId: string): Promise<TrelloMember[]> {
     return this.handleRequest(async () => {
       const response = await this.axiosInstance.post(`/cards/${cardId}/idMembers`, {
         value: memberId,
@@ -837,7 +838,8 @@ export class TrelloClient {
     });
   }
 
-  async removeMemberFromCard(cardId: string, memberId: string): Promise<unknown[]> {
+  /** Trello replies with the members that stay on the card. */
+  async removeMemberFromCard(cardId: string, memberId: string): Promise<TrelloMember[]> {
     return this.handleRequest(async () => {
       const response = await this.axiosInstance.delete(`/cards/${cardId}/idMembers/${memberId}`);
       return response.data;
