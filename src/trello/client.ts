@@ -31,7 +31,7 @@ import * as batch from './batch.js';
 import * as checklists from './checklists.js';
 import { BatchAddCardsResult, BatchCard } from './batch.js';
 import { MAX_RETRIES, describeError, isLostReply } from './errors.js';
-import { DEFAULT_DESCRIPTION_LIMIT, checkDescription } from './validation.js';
+import { DEFAULT_DESCRIPTION_LIMIT, checkDates, checkDescription } from './validation.js';
 import { WorkspaceGuard } from './workspace-guard.js';
 
 // Where the active board and workspace are kept between runs.
@@ -364,6 +364,7 @@ export class TrelloClient {
     }
   ): Promise<TrelloCard> {
     checkDescription(params.description, this.descriptionLimit);
+    checkDates({ dueDate: params.dueDate, start: params.start });
     await this.checkOnBoard('list', params.listId, boardId);
     return this.handleRequest(async () => {
       const response = await this.axiosInstance.post('/cards', {
@@ -395,6 +396,7 @@ export class TrelloClient {
     }
   ): Promise<TrelloCard> {
     checkDescription(params.description, this.descriptionLimit);
+    checkDates({ dueDate: params.dueDate, start: params.start });
     const cardId = await this.resolveCardId(params.cardId, params.cardNumber, boardId);
     return this.handleRequest(async () => {
       const response = await this.axiosInstance.put(`/cards/${cardId}`, {
@@ -793,6 +795,7 @@ export class TrelloClient {
     updates: TrelloCheckItemUpdate | TrelloCheckItem['state']
   ): Promise<TrelloCheckItem> {
     const normalizedUpdates = typeof updates === 'string' ? { state: updates } : updates;
+    checkDates({ due: normalizedUpdates.due });
     const payload = Object.fromEntries(
       Object.entries(normalizedUpdates).filter(([, value]) => value !== undefined)
     ) as TrelloCheckItemUpdate;

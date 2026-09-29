@@ -2,7 +2,7 @@ import axios, { AxiosInstance } from 'axios';
 import { McpError, ErrorCode } from '@modelcontextprotocol/sdk/types.js';
 import { TrelloCard } from './types.js';
 import { MAX_RETRIES, describeError, isLostReply } from './errors.js';
-import { ISO_DATE, descriptionLength } from './validation.js';
+import { descriptionLength, isIsoDate } from './validation.js';
 
 export const BATCH_LIMIT = 50;
 
@@ -75,7 +75,7 @@ async function checkBatch(
       ['dueDate', card.dueDate],
       ['start', card.start],
     ] as const) {
-      if (value !== undefined && !(ISO_DATE.test(value) && !Number.isNaN(Date.parse(value)))) {
+      if (value !== undefined && !isIsoDate(value)) {
         problems.push(`card ${i + 1} "${card.name}": ${field} "${value}" is not an ISO 8601 date`);
       }
     }

@@ -237,6 +237,40 @@ describe('TrelloClient', () => {
     });
   });
 
+  describe('date checks', () => {
+    it('refuses a card with a due date that is not ISO 8601 and sends nothing', async () => {
+      const client = createClient();
+
+      await expect(
+        client.addCard(undefined, { listId: 'l1', name: 'Card', dueDate: 'next Friday' })
+      ).rejects.toThrow('dueDate "next Friday" is not an ISO 8601 date');
+      expect(mockAxiosInstance.get).not.toHaveBeenCalled();
+      expect(mockAxiosInstance.post).not.toHaveBeenCalled();
+    });
+
+    it('refuses an update with a start date that is not ISO 8601 and sends nothing', async () => {
+      const client = createClient();
+
+      await expect(
+        client.updateCard(undefined, { cardId: 'c1', start: '01/10/2026' })
+      ).rejects.toThrow('start "01/10/2026" is not an ISO 8601 date');
+      expect(mockAxiosInstance.put).not.toHaveBeenCalled();
+    });
+
+    it('refuses a checklist item due date that is not ISO 8601, and lets null clear it', async () => {
+      mockAxiosInstance.put.mockResolvedValue({ data: { id: 'ci1' } });
+      const client = createClient();
+
+      await expect(client.updateChecklistItem('c1', 'ci1', { due: 'tomorrow' })).rejects.toThrow(
+        'due "tomorrow" is not an ISO 8601 date'
+      );
+      expect(mockAxiosInstance.put).not.toHaveBeenCalled();
+
+      await client.updateChecklistItem('c1', 'ci1', { due: null });
+      expect(mockAxiosInstance.put).toHaveBeenCalledWith('/cards/c1/checkItem/ci1', { due: null });
+    });
+  });
+
   describe('archiveCard', () => {
     it('should set closed to true', async () => {
       mockAxiosInstance.put.mockResolvedValue({ data: { id: 'c1', closed: true } });
