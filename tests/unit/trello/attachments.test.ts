@@ -160,6 +160,16 @@ describe('attachments', () => {
         expect(axiosInstance.post).toHaveBeenCalledTimes(1);
       });
 
+      it('uploads a file in the root whose name starts with two dots', async () => {
+        const file = path.join(root, '..notes.txt');
+        await fs.writeFile(file, 'notes');
+        const axiosInstance = createAxiosMock();
+
+        await attach(axiosInstance, { cardId: 'c1', source: `file://${file}`, attachRoot: root });
+
+        expect(fields(axiosInstance)).toContain('..notes.txt');
+      });
+
       it("adds the file's extension to a name that has none", async () => {
         const file = path.join(root, 'screenshot-2026-09-23-1326.png');
         await fs.writeFile(file, 'png');

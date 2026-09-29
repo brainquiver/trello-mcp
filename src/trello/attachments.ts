@@ -175,8 +175,11 @@ async function insideAttachRoot(
   } catch {
     throw new McpError(ErrorCode.InvalidRequest, `File not found: ${requested}`);
   }
+  // Only a relative path that climbs starts with the .. folder. A name such as ..notes.txt
+  // is a file inside the root.
   const relative = path.relative(root, real);
-  if (!relative || relative.startsWith('..') || path.isAbsolute(relative)) {
+  const climbs = relative === '..' || relative.startsWith(`..${path.sep}`);
+  if (!relative || climbs || path.isAbsolute(relative)) {
     throw new McpError(
       ErrorCode.InvalidRequest,
       `Refused: ${requested} is outside TRELLO_ATTACH_ROOT (${root}). Nothing was uploaded. Move the file into that folder, or tell the user, who can change TRELLO_ATTACH_ROOT.`
