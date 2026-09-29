@@ -2,15 +2,7 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { TrelloClient } from './trello/client.js';
-import { registerBoardTools } from './tools/boards.js';
-import { registerListTools } from './tools/lists.js';
-import { registerCardTools } from './tools/cards.js';
-import { registerCommentTools } from './tools/comments.js';
-import { registerChecklistTools } from './tools/checklists.js';
-import { registerAttachmentTools } from './tools/attachments.js';
-import { registerLabelTools } from './tools/labels.js';
-import { registerMemberTools } from './tools/members.js';
-import { registerCustomFieldTools } from './tools/custom-fields.js';
+import { buildServer } from './server.js';
 
 /**
  * A positive number from the environment, or undefined when unset so the client's default
@@ -58,24 +50,7 @@ class TrelloServer {
       maxDownloadMb: positiveNumber('TRELLO_MAX_DOWNLOAD_MB'),
     });
 
-    this.server = new McpServer({
-      name: 'trello-mcp',
-      version: '1.0.0',
-    });
-
-    for (const register of [
-      registerBoardTools,
-      registerListTools,
-      registerCardTools,
-      registerCommentTools,
-      registerChecklistTools,
-      registerAttachmentTools,
-      registerLabelTools,
-      registerMemberTools,
-      registerCustomFieldTools,
-    ]) {
-      register(this.server, this.trelloClient);
-    }
+    this.server = buildServer(this.trelloClient);
 
     process.on('SIGINT', async () => {
       await this.server.close();

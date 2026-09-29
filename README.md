@@ -110,7 +110,7 @@ When an agent reports that the server is down, or that a tool is absent, take th
 
 ## 2. Directory Tree
 
-    src/                    index.ts, which reads the settings, registers the tools and starts stdio
+    src/                    index.ts, which reads the settings and starts stdio, and server.ts, which registers the tools
     src/tools/              the tools, one file for each area, with their inputs and descriptions
     src/trello/             the calls to Trello: the client, retries, the guard, the batch and the checks
     src/reply/              what goes back to the agent: the reply helpers, the shapers, the markdown card
