@@ -62,7 +62,7 @@ These twelve tools find, read, make, change and archive cards.
 
 | Tool | Required | Optional | Result |
 | --- | --- | --- | --- |
-| **`get_cards_by_list_id`** | `listId` | `boardId`, `fields`, `nameFilter`, `descMaxLength`, `omitDescThresholdBytes`, `raw` | The cards in a list. Each description is cut to 200 characters by default, and all of them are dropped when the reply passes 50,000 bytes. |
+| **`get_cards_by_list_id`** | `listId` | `boardId`, `fields`, `nameFilter`, `descMaxLength`, `omitDescThresholdBytes`, `raw` | The cards in a list. Each description is cut to 200 characters by default, and all of them are dropped when the reply passes 50,000 bytes. With `fields`, each card holds its ID and exactly the fields named, untrimmed. |
 | **`get_my_cards`** | | `raw` | The cards that the user is a member of. |
 | **`search_cards`** | `query` | `boardId`, `limit` | The cards with the words in their name or description, 20 by default and at most 100. |
 | **`get_card`** | `cardId` or `cardNumber` | `boardId`, `includeMarkdown`, `raw` | One card in full, with its labels, members, checklists, attachments and comments. |

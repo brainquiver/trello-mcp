@@ -24,7 +24,7 @@ export function registerCardTools(server: McpServer, client: TrelloClient): void
           .string()
           .optional()
           .describe(
-            'Comma-separated list of fields to return (e.g., "name,idShort,labels,due,dueComplete"). Omit for all fields.'
+            'Comma-separated list of fields to return (e.g., "name,idShort,labels,due,dueComplete"). Each card then holds its ID and exactly those fields, untrimmed. Omit for the trimmed card.'
           ),
         nameFilter: z
           .string()
@@ -59,7 +59,8 @@ export function registerCardTools(server: McpServer, client: TrelloClient): void
       safe(async () => {
         const cards = await client.getCardsByList(listId, fields, nameFilter, boardId);
         const options = { descMaxLength, omitDescThresholdBytes };
-        return raw
+        // Trello already sends only the fields asked for, so a trim would drop some of them.
+        return raw || fields
           ? formatCardListResponse(cards, options)
           : formatCardListResponse(cards.map(shape.card), options);
       })
