@@ -94,7 +94,7 @@ The two suites answer different questions, and they live apart.
 | **Unit** | `tests/unit/` | only `npm ci` | The code does what we think Trello expects. Every call goes to a mocked Trello. |
 | **Smoke** | `tests/smoke/` | `TRELLO_API_KEY`, `TRELLO_TOKEN` and `TRELLO_TEST_BOARD_ID` in `.env` | Trello accepts the calls. The suite starts `build/index.js` and calls its tools over MCP. |
 
-The smoke suite skips itself when one of its three settings is absent, so `npm test` needs no Trello account. Run `npm run build` before the smoke suite, because it starts the built server and not the source. The unit suite runs against the source, without a build.
+The smoke suite skips itself when one of its three settings is absent, so `npm test` needs no Trello account. The smoke suite starts the built server, so `npm test` and `npm run test:smoke` run `npm run build` first. The unit suite runs against the source, and `npm run test:unit` does not build.
 
 ### 1.4 Server Checks
 

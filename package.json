@@ -23,8 +23,10 @@
     "typecheck": "tsc --noEmit",
     "lint": "eslint src tests --ext .ts",
     "format": "prettier --write src tests",
+    "pretest": "npm run build",
     "test": "vitest run",
     "test:unit": "vitest run tests/unit",
+    "pretest:smoke": "npm run build",
     "test:smoke": "vitest run tests/smoke",
     "test:coverage": "vitest run --coverage"
   },
