@@ -23,9 +23,8 @@ export function formatCardAsMarkdown(card: EnhancedTrelloCard): string {
 
   // Due date
   if (card.due) {
-    const dueDate = new Date(card.due);
     const status = card.dueComplete ? 'Complete' : 'Due';
-    markdown += `## Due Date\n${status}: ${dueDate.toLocaleString()}\n\n`;
+    markdown += `## Due Date\n${status}: ${isoDate(card.due)}\n\n`;
   }
 
   // Members
@@ -73,8 +72,7 @@ export function formatCardAsMarkdown(card: EnhancedTrelloCard): string {
         const checkbox = item.state === 'complete' ? '[x]' : '[ ]';
         markdown += `- ${checkbox} ${item.name}`;
         if (item.due) {
-          const itemDue = new Date(item.due);
-          markdown += ` (Due: ${itemDue.toLocaleDateString()})`;
+          markdown += ` (Due: ${isoDate(item.due)})`;
         }
         if (item.idMember) {
           const member = card.members?.find(m => m.id === item.idMember);
@@ -105,7 +103,7 @@ export function formatCardAsMarkdown(card: EnhancedTrelloCard): string {
       if (attachment.mimeType) {
         markdown += `- **Type**: ${attachment.mimeType}\n`;
       }
-      markdown += `- **Added**: ${new Date(attachment.date).toLocaleString()}\n`;
+      markdown += `- **Added**: ${isoDate(attachment.date)}\n`;
 
       // Image preview
       if (attachment.previews && attachment.previews.length > 0) {
@@ -120,8 +118,7 @@ export function formatCardAsMarkdown(card: EnhancedTrelloCard): string {
   if (card.actions && card.actions.length > 0) {
     markdown += `## Comments (${card.actions.length})\n`;
     card.actions.forEach(comment => {
-      const date = new Date(comment.date);
-      markdown += `### ${comment.memberCreator.fullName} (@${comment.memberCreator.username}) - ${date.toLocaleString()}\n`;
+      markdown += `### ${comment.memberCreator.fullName} (@${comment.memberCreator.username}) - ${isoDate(comment.date)}\n`;
       markdown += `${comment.data.text}\n\n`;
     });
   }
@@ -151,10 +148,17 @@ export function formatCardAsMarkdown(card: EnhancedTrelloCard): string {
 
   // Metadata
   markdown += `---\n`;
-  markdown += `*Last Activity: ${new Date(card.dateLastActivity).toLocaleString()}*\n`;
+  markdown += `*Last Activity: ${isoDate(card.dateLastActivity)}*\n`;
   markdown += `*Card ID: ${card.id}*\n`;
 
   return markdown;
+}
+
+// A date in UTC as ISO 8601. A local format depends on the locale and the time zone of the
+// machine that runs the server, and it does not show the zone.
+function isoDate(value: string): string {
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? value : date.toISOString();
 }
 
 function formatFileSize(bytes: number): string {

@@ -55,6 +55,13 @@ const card = {
 describe('formatCardAsMarkdown', () => {
   const markdown = formatCardAsMarkdown(card);
 
+  it('should give every date as ISO 8601 in UTC, whatever the locale of the machine', () => {
+    expect(markdown).toContain('Due: 2026-10-01T12:00:00.000Z');
+    expect(markdown).toContain('- **Added**: 2026-09-23T10:00:00.000Z');
+    expect(markdown).toContain('(@ada) - 2026-09-23T11:00:00.000Z');
+    expect(markdown).toContain('*Last Activity: 2026-09-23T10:00:00.000Z*');
+  });
+
   it('should open with the card name and where it sits', () => {
     expect(markdown.startsWith('# Chat button\n\n')).toBe(true);
     expect(markdown).toContain('**Board**: [Product](https://trello.com/b/p) > **List**: Doing');
