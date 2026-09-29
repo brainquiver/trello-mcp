@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any -- replies are free-form JSON, checked field by field with expect */
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { spawn, ChildProcess } from 'child_process';
+import { mkdtempSync, rmSync } from 'fs';
+import os from 'os';
 import path from 'path';
 
 const TRELLO_API_KEY = process.env.TRELLO_API_KEY;
@@ -17,6 +19,9 @@ class McpTestClient {
   private buffer = '';
   private requestId = 0;
   private pending = new Map<number, (msg: any) => void>();
+  // The server saves the active board in its home folder. A scratch home keeps the suite
+  // away from the active board of the person who runs it.
+  private readonly home = mkdtempSync(path.join(os.tmpdir(), 'trello-mcp-smoke-'));
 
   constructor() {
     this.server = spawn('node', [path.resolve('build/index.js')], {
@@ -24,6 +29,8 @@ class McpTestClient {
         ...process.env,
         TRELLO_API_KEY,
         TRELLO_TOKEN,
+        HOME: this.home,
+        USERPROFILE: this.home,
       },
       stdio: ['pipe', 'pipe', 'pipe'],
     });
@@ -82,6 +89,7 @@ class McpTestClient {
 
   close(): void {
     this.server.kill();
+    rmSync(this.home, { recursive: true, force: true });
   }
 }
 
