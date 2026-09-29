@@ -195,24 +195,27 @@ async function uploadData(
   axiosInstance: AxiosInstance,
   { cardId, source, name, mimeType }: AttachParams
 ): Promise<TrelloAttachment> {
-  const matches = source.match(/^data:([^;]+);base64,(.+)$/);
+  // A data URL can carry parameters such as charset after the type, and base64 is often
+  // wrapped in lines of 76 characters. Both are valid, so both are accepted.
+  const matches = source.match(/^data:([^;,]+)(?:;[^,]*)?;base64,([\s\S]+)$/);
   if (!matches) {
     throw new McpError(
       ErrorCode.InvalidRequest,
       'Invalid data URL, expected data:<mime>;base64,<data>'
     );
   }
+  const base64 = matches[2].replace(/\s+/g, '');
+  if (!/^[A-Za-z0-9+/]+={0,2}$/.test(base64)) {
+    throw new McpError(
+      ErrorCode.InvalidRequest,
+      'Invalid data URL: the part after "base64," is not valid base64. Nothing was uploaded.'
+    );
+  }
 
   const effectiveMimeType = mimeType || matches[1];
   const extension = extensionFromMime(effectiveMimeType);
   const fileName = name ? withExtension(name, extension) : `attachment-${Date.now()}${extension}`;
-  return upload(
-    axiosInstance,
-    cardId,
-    Buffer.from(matches[2], 'base64'),
-    fileName,
-    effectiveMimeType
-  );
+  return upload(axiosInstance, cardId, Buffer.from(base64, 'base64'), fileName, effectiveMimeType);
 }
 
 /**

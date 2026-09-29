@@ -356,6 +356,30 @@ describe('attachments', () => {
         expect(body).not.toContain('photo.jpg.png');
       });
 
+      it('accepts base64 wrapped in lines and a charset parameter', async () => {
+        const axiosInstance = createAxiosMock();
+        const wrapped = b64('x'.repeat(120)).replace(/(.{76})/g, '$1\r\n');
+
+        await attach(axiosInstance, {
+          cardId: 'c1',
+          source: `data:text/plain;charset=utf-8;base64,${wrapped}`,
+          name: 'notes.txt',
+        });
+
+        const body = lastForm(axiosInstance).toString();
+        expect(body).toContain('x'.repeat(120));
+        expect(body).toContain('text/plain');
+      });
+
+      it('refuses data that is not base64 without uploading', async () => {
+        const axiosInstance = createAxiosMock();
+
+        await expect(
+          attach(axiosInstance, { cardId: 'c1', source: 'data:text/plain;base64,not base64!' })
+        ).rejects.toThrow(/is not valid base64/);
+        expect(axiosInstance.post).not.toHaveBeenCalled();
+      });
+
       it('rejects a malformed data URL without uploading', async () => {
         const axiosInstance = createAxiosMock();
 
