@@ -47,7 +47,6 @@ vi.mock('fs/promises', () => ({
 
 function createClient(overrides?: {
   boardId?: string;
-  defaultBoardId?: string;
   allowedWorkspaceIds?: string[];
   descriptionLimit?: number;
   maxDownloadMb?: number;
@@ -289,7 +288,7 @@ describe('TrelloClient', () => {
       mockAxiosInstance.get.mockResolvedValue(listOn('b2'));
       mockAxiosInstance.put.mockResolvedValue({ data: { id: 'c1' } });
 
-      const client = createClient({ defaultBoardId: 'b1' });
+      const client = createClient({ boardId: 'b1' });
       await client.moveCard(undefined, 'c1', 'l2');
 
       expect(mockAxiosInstance.get).toHaveBeenCalledWith('/lists/l2', expect.anything());
@@ -303,7 +302,7 @@ describe('TrelloClient', () => {
       mockAxiosInstance.get.mockResolvedValue(listOn('b2'));
       mockAxiosInstance.put.mockResolvedValue({ data: { id: 'c1' } });
 
-      const client = createClient({ defaultBoardId: 'b1' });
+      const client = createClient({ boardId: 'b1' });
       await client.moveCard(undefined, 'c1', 'l2', 'top');
 
       const body = mockAxiosInstance.put.mock.calls[0][1];
@@ -1907,7 +1906,7 @@ describe('TrelloClient', () => {
   describe('active board', () => {
     it('should start as TRELLO_BOARD_ID, and a named board wins over it', async () => {
       mockAxiosInstance.get.mockResolvedValue({ data: [] });
-      const client = createClient({ defaultBoardId: 'default' });
+      const client = createClient({ boardId: 'default' });
 
       await client.getLists();
       await client.getLists('named');

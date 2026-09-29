@@ -1,7 +1,7 @@
 export interface TrelloConfig {
   apiKey: string;
   token: string;
-  defaultBoardId?: string;
+  /** The first active board, from TRELLO_BOARD_ID. set_active_board replaces it. */
   boardId?: string;
   workspaceId?: string;
   /** Optional list of workspace IDs to restrict access to. If set, only these workspaces can be accessed. */

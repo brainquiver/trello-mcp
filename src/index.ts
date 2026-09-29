@@ -35,7 +35,6 @@ class TrelloServer {
   constructor() {
     const apiKey = process.env.TRELLO_API_KEY;
     const token = process.env.TRELLO_TOKEN;
-    const defaultBoardId = process.env.TRELLO_BOARD_ID;
     const allowedWorkspacesEnv = process.env.TRELLO_ALLOWED_WORKSPACES;
 
     if (!apiKey || !token) {
@@ -52,8 +51,7 @@ class TrelloServer {
     this.trelloClient = new TrelloClient({
       apiKey,
       token,
-      defaultBoardId,
-      boardId: defaultBoardId,
+      boardId: process.env.TRELLO_BOARD_ID,
       allowedWorkspaceIds,
       attachRoot: process.env.TRELLO_ATTACH_ROOT?.trim() || undefined,
       descriptionLimit: positiveNumber('TRELLO_DESCRIPTION_LIMIT', { whole: true }),

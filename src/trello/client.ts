@@ -52,7 +52,7 @@ export class TrelloClient {
   readonly maxDownloadMb: number;
 
   constructor(private config: TrelloConfig) {
-    this.activeConfig = { ...config, boardId: config.boardId ?? config.defaultBoardId };
+    this.activeConfig = { ...config };
     this.descriptionLimit = config.descriptionLimit ?? DEFAULT_DESCRIPTION_LIMIT;
     this.maxDownloadMb = config.maxDownloadMb ?? DEFAULT_MAX_DOWNLOAD_MB;
     const axiosConfig: CreateAxiosDefaults = {
