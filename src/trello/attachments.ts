@@ -2,7 +2,6 @@ import { AxiosInstance } from 'axios';
 import FormData from 'form-data';
 import * as fs from 'fs/promises';
 import * as path from 'path';
-import { createReadStream } from 'fs';
 import { fileURLToPath } from 'url';
 import { McpError, ErrorCode } from '@modelcontextprotocol/sdk/types.js';
 import { TrelloAttachment } from './types.js';
@@ -142,18 +141,7 @@ async function uploadLocalFile(
   const effectiveMimeType = mimeType || mimeFromFilename(localPath) || DEFAULT_MIME_TYPE;
   const extension = path.extname(localPath) || extensionFromMime(effectiveMimeType);
   const fileName = name ? withExtension(name, extension) : path.basename(localPath);
-  const form = new FormData();
-  form.append('file', createReadStream(localPath), {
-    filename: fileName,
-    contentType: effectiveMimeType,
-  });
-  form.append('name', fileName);
-  form.append('mimeType', effectiveMimeType);
-
-  const response = await axiosInstance.post(`/cards/${cardId}/attachments`, form, {
-    headers: { ...form.getHeaders() },
-  });
-  return response.data;
+  return upload(axiosInstance, cardId, await fs.readFile(localPath), fileName, effectiveMimeType);
 }
 
 /**
@@ -215,16 +203,32 @@ async function uploadData(
   const effectiveMimeType = mimeType || matches[1];
   const extension = extensionFromMime(effectiveMimeType);
   const fileName = name ? withExtension(name, extension) : `attachment-${Date.now()}${extension}`;
-  const form = new FormData();
-  form.append('file', Buffer.from(matches[2], 'base64'), {
-    filename: fileName,
-    contentType: effectiveMimeType,
-  });
-  form.append('name', fileName);
-  form.append('mimeType', effectiveMimeType);
+  return upload(
+    axiosInstance,
+    cardId,
+    Buffer.from(matches[2], 'base64'),
+    fileName,
+    effectiveMimeType
+  );
+}
 
-  const response = await axiosInstance.post(`/cards/${cardId}/attachments`, form, {
-    headers: { ...form.getHeaders() },
+/**
+ * Send the bytes as a multipart form. The body is one Buffer, because the client sends a
+ * request again after a 429. A stream is empty the second time.
+ */
+async function upload(
+  axiosInstance: AxiosInstance,
+  cardId: string,
+  bytes: Buffer,
+  fileName: string,
+  mimeType: string
+): Promise<TrelloAttachment> {
+  const form = new FormData();
+  form.append('file', bytes, { filename: fileName, contentType: mimeType });
+  form.append('name', fileName);
+  form.append('mimeType', mimeType);
+  const response = await axiosInstance.post(`/cards/${cardId}/attachments`, form.getBuffer(), {
+    headers: form.getHeaders(),
   });
   return response.data;
 }

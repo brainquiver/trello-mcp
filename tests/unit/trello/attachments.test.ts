@@ -3,7 +3,10 @@ import { AxiosInstance } from 'axios';
 import * as fs from 'fs/promises';
 import * as os from 'os';
 import * as path from 'path';
+import * as http from 'http';
+import { AddressInfo } from 'net';
 import { attach, MIME_TYPES } from '../../../src/trello/attachments.js';
+import { TrelloClient } from '../../../src/trello/client.js';
 
 vi.mock('fs/promises', async () => {
   const actual = await vi.importActual<typeof import('fs/promises')>('fs/promises');
@@ -128,7 +131,7 @@ describe('attachments', () => {
       });
 
       const fields = (axiosInstance: AxiosInstance) =>
-        (lastForm(axiosInstance) as { _streams: unknown[] })._streams.join('\n');
+        (lastForm(axiosInstance) as Buffer).toString();
 
       it('uploads a file inside the root as multipart form data under its own name', async () => {
         const file = path.join(root, 'notes.md');
@@ -275,7 +278,7 @@ describe('attachments', () => {
           expect.anything(),
           expect.objectContaining({ headers: expect.any(Object) })
         );
-        const body = lastForm(axiosInstance).getBuffer().toString();
+        const body = lastForm(axiosInstance).toString();
         expect(body).toContain('application/pdf');
         expect(body).toContain('r.pdf');
       });
@@ -290,7 +293,7 @@ describe('attachments', () => {
           mimeType: 'application/pdf',
         });
 
-        const body = lastForm(axiosInstance).getBuffer().toString();
+        const body = lastForm(axiosInstance).toString();
         expect(body).toContain('application/pdf');
         expect(body).not.toContain('application/octet-stream');
       });
@@ -303,7 +306,7 @@ describe('attachments', () => {
           source: `data:image/png;base64,${b64('png')}`,
         });
 
-        expect(lastForm(axiosInstance).getBuffer().toString()).toMatch(/attachment-\d+\.png/);
+        expect(lastForm(axiosInstance).toString()).toMatch(/attachment-\d+\.png/);
       });
 
       it('omits the extension when the mime type has no entry in MIME_TYPES', async () => {
@@ -314,7 +317,7 @@ describe('attachments', () => {
           source: `data:application/x-unknown;base64,${b64('blob')}`,
         });
 
-        expect(lastForm(axiosInstance).getBuffer().toString()).toMatch(/attachment-\d+"/);
+        expect(lastForm(axiosInstance).toString()).toMatch(/attachment-\d+"/);
       });
 
       it('adds the extension to a name that has none', async () => {
@@ -326,7 +329,7 @@ describe('attachments', () => {
           name: 'test-56-chat-button',
         });
 
-        expect(lastForm(axiosInstance).getBuffer().toString()).toContain('test-56-chat-button.png');
+        expect(lastForm(axiosInstance).toString()).toContain('test-56-chat-button.png');
       });
 
       it('keeps a name that already has an extension', async () => {
@@ -338,7 +341,7 @@ describe('attachments', () => {
           name: 'photo.jpg',
         });
 
-        const body = lastForm(axiosInstance).getBuffer().toString();
+        const body = lastForm(axiosInstance).toString();
         expect(body).toContain('photo.jpg');
         expect(body).not.toContain('photo.jpg.png');
       });
@@ -351,6 +354,50 @@ describe('attachments', () => {
         ).rejects.toThrow(/Invalid data URL/);
         expect(axiosInstance.post).not.toHaveBeenCalled();
       });
+    });
+  });
+
+  describe('retry after a 429', () => {
+    let server: http.Server;
+    let bodies: number[];
+
+    beforeEach(async () => {
+      bodies = [];
+      // A fake Trello that refuses the first upload with a 429 and accepts the next one.
+      server = http.createServer((req, res) => {
+        let size = 0;
+        req.on('data', chunk => (size += chunk.length));
+        req.on('end', () => {
+          bodies.push(size);
+          if (bodies.length === 1) {
+            res.writeHead(429);
+            res.end('rate limit');
+            return;
+          }
+          res.writeHead(200, { 'content-type': 'application/json' });
+          res.end(JSON.stringify({ id: 'a1' }));
+        });
+      });
+      await new Promise<void>(resolve => server.listen(0, '127.0.0.1', resolve));
+    });
+
+    afterEach(async () => {
+      await new Promise(resolve => server.close(resolve));
+    });
+
+    it('sends the whole upload again, because the body is a Buffer', async () => {
+      const client = new TrelloClient({ apiKey: 'k', token: 't' });
+      const port = (server.address() as AddressInfo).port;
+      (client as unknown as { axiosInstance: AxiosInstance }).axiosInstance.defaults.baseURL =
+        `http://127.0.0.1:${port}`;
+      const source = `data:text/plain;base64,${Buffer.from('x'.repeat(5000)).toString('base64')}`;
+
+      const result = await client.attachToCard('c1', source, 'notes.txt');
+
+      expect(result).toEqual({ id: 'a1' });
+      expect(bodies).toHaveLength(2);
+      expect(bodies[1]).toBe(bodies[0]);
+      expect(bodies[0]).toBeGreaterThan(5000);
     });
   });
 });
