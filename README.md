@@ -139,7 +139,8 @@ Each rule states what to do, and its reason states what goes wrong otherwise.
 | --- | --- |
 | **Give every new tool a trimmed reply, through `json()` and a shaper in `src/reply/shape.ts`.** | A raw Trello reply is mostly identifiers and display data, and the agent pays for every word of it in context. |
 | **Offer `raw: true` on read tools only.** | It lets an agent inspect a full object. A write returns the object that it changed, and the trimmed form confirms the change. |
-| **Update the skill in the same commit as the tool.** | Agents rely on `skills/trello-mcp/references/tools.md` for every tool and input. A stale entry leads to calls that the server refuses. |
+| **Update the skill in the same commit as the tool.** | Agents rely on `skills/trello-mcp/references/tools.md` for every tool and input. A stale entry leads to calls that the server refuses, and `tests/unit/server.test.ts` fails when a row and the inputs of its tool differ. |
+| **Add a call for every new tool to `tests/unit/server.test.ts`.** | That test is the only unit test that reaches a tool handler, and it fails for a tool without a call. |
 | **Never retry a write after a server error or a lost reply.** | Trello may have completed the write before the failure, so a blind retry creates a duplicate. The interceptor in `src/trello/client.ts` retries a 429 for any request, and other failures for reads only. |
 | **Add every new route to the workspace guard.** | The guard refuses a route that it cannot trace to a workspace. An unlisted route therefore fails whenever `TRELLO_ALLOWED_WORKSPACES` is set. |
 | **Report every refusal as an `McpError` with its reason.** | `handleRequest` forwards an `McpError` unchanged and adds Trello's reason to any other error. Before this rule, refusals such as the 50-card batch limit reached the agent only as "An unexpected error occurred". |
