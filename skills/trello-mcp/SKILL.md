@@ -13,7 +13,7 @@ When a tool is absent or a call times out, the server is either stopped or disco
 
 ## 2. Names for Boards, Lists and Cards
 
-Trello names each board, list, card, checklist, label and member with an identifier (ID), a code of letters and digits that only Trello can give. Never make an ID from a name or from a web address (URL). Copy each ID exactly from a tool's reply. Three inputs let a call use less than a full ID, and each one has a rule.
+Trello names each board, list, card, checklist, label and member with an identifier (ID). An ID is a code of letters and digits that only Trello can give. Never make an ID from a name or from a web address (URL). Copy each ID exactly from a tool's reply. Three inputs let a call use less than a full ID, and each one has a rule.
 
 | Input | Rule |
 | --- | --- |
