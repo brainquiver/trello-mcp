@@ -1,0 +1,42 @@
+name: Scorecard
+
+# The OpenSSF Scorecard of the repository. It checks its security practice, as the pins of the
+# actions, the permissions of the token and the protection of main, and it publishes the score
+# for the badge. The Scorecard service accepts a published result only from a GitHub-hosted
+# Ubuntu runner, with no write permission at the top of the workflow, and with the approved
+# actions alone. So this job runs on GitHub, and not on Blacksmith.
+on:
+  push:
+    branches: [main]
+  schedule:
+    # Every Monday at 05:37 UTC, the default cadence of Scorecard. A score can change without a
+    # push here, as when a pinned action gets a new release.
+    - cron: '37 5 * * 1'
+
+permissions:
+  contents: read
+
+jobs:
+  analysis:
+    name: Scorecard
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      # To publish the result for the badge, through a GitHub OIDC token.
+      id-token: write
+      # To upload the result to the Security tab of the repository.
+      security-events: write
+    steps:
+      # Pinned to a commit, because a tag can be moved to other code.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: ossf/scorecard-action@2d1146689b8cda280b9bc96326124645441f03bc # v2.4.4
+        with:
+          results_file: results.sarif
+          results_format: sarif
+          publish_results: true
+      - uses: github/codeql-action/upload-sarif@2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2 # v4.38.2
+        with:
+          sarif_file: results.sarif
