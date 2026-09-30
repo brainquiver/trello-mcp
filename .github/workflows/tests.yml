@@ -18,7 +18,10 @@ concurrency:
 jobs:
   unit:
     name: Unit (Node ${{ matrix.node }})
-    runs-on: ubuntu-latest
+    # Blacksmith for pushes to main and for pull requests. A Dependabot pull request stays on
+    # GitHub, because a routine update gains nothing from a faster runner. The test reads who
+    # opened the pull request, so a manual re-run of its checks stays on GitHub too.
+    runs-on: ${{ github.event.pull_request.user.login == 'dependabot[bot]' && 'ubuntu-latest' || 'blacksmith-2vcpu-ubuntu-2404' }}
     timeout-minutes: 10
     strategy:
       fail-fast: false
