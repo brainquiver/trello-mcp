@@ -24,7 +24,9 @@ jobs:
   # Cron cannot say "every second week", so a scheduled run goes on in odd weeks only. The count
   # is whole weeks since 1970. An ISO week number would run twice in a row after a week 53.
   week:
-    runs-on: ubuntu-latest
+    # Ubuntu 24.04 on every job here, the system of the Blacksmith runners in the tests
+    # workflow. ubuntu-latest moves to Ubuntu 26.04 from 2026-10-19, and both move together later.
+    runs-on: ubuntu-24.04
     timeout-minutes: 2
     outputs:
       run: ${{ steps.week.outputs.run }}
@@ -41,7 +43,7 @@ jobs:
   smoke:
     needs: week
     if: needs.week.outputs.run == 'true'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     environment: smoke
     # The search test can wait 5 minutes for the Trello search index.
     timeout-minutes: 15
