@@ -1,0 +1,60 @@
+name: Smoke
+
+# The live tests, against the boards of the Brainquiver CI Trello account. The key and the token
+# reach this job only through the smoke environment, which admits the main branch alone. So code
+# from a fork or from another branch never sees them.
+on:
+  push:
+    branches: [main]
+  schedule:
+    # Every day at 05:17 UTC. Trello can change its API without a push here.
+    - cron: '17 5 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# Two runs on the same boards at once would archive the cards of the other run.
+concurrency:
+  group: smoke
+  cancel-in-progress: false
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    environment: smoke
+    # The search test can wait 5 minutes for the Trello search index.
+    timeout-minutes: 15
+    env:
+      TRELLO_API_KEY: ${{ secrets.TRELLO_API_KEY }}
+      TRELLO_TOKEN: ${{ secrets.TRELLO_TOKEN }}
+      TRELLO_TEST_BOARD_ID: ${{ vars.TRELLO_TEST_BOARD_ID }}
+      TRELLO_TEST_OTHER_BOARD_ID: ${{ vars.TRELLO_TEST_OTHER_BOARD_ID }}
+      TRELLO_TEST_WORKSPACE_ID: ${{ vars.TRELLO_TEST_WORKSPACE_ID }}
+      TRELLO_TEST_REFUSED_WORKSPACE_ID: ${{ vars.TRELLO_TEST_REFUSED_WORKSPACE_ID }}
+      TRELLO_TEST_REFUSED_BOARD_ID: ${{ vars.TRELLO_TEST_REFUSED_BOARD_ID }}
+    steps:
+      # The suite skips a test whose setting is absent. Without this check, a missing secret
+      # would give a green run in which no test ran.
+      - name: Check the settings
+        run: |
+          missing=""
+          for name in TRELLO_API_KEY TRELLO_TOKEN TRELLO_TEST_BOARD_ID TRELLO_TEST_OTHER_BOARD_ID \
+            TRELLO_TEST_WORKSPACE_ID TRELLO_TEST_REFUSED_WORKSPACE_ID TRELLO_TEST_REFUSED_BOARD_ID; do
+            [ -n "${!name}" ] || missing="$missing $name"
+          done
+          if [ -n "$missing" ]; then
+            echo "::error::The smoke environment does not set:$missing"
+            exit 1
+          fi
+      # Pinned to a commit, because a tag can be moved to other code.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      # pretest:smoke builds the server first.
+      - run: npm run test:smoke
