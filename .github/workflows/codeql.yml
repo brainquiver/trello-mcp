@@ -1,0 +1,48 @@
+name: CodeQL
+
+# Static analysis of the code, for the Security tab and for the SAST check of the OpenSSF
+# Scorecard. It scans the TypeScript and JavaScript, and the workflows themselves, on each pull
+# request, on each push to main, and every Monday.
+on:
+  push:
+    branches: [main]
+  pull_request:
+  schedule:
+    # Every Monday at 05:47 UTC. A new CodeQL query can find a fault in code that did not change.
+    - cron: '47 5 * * 1'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: codeql-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  analyze:
+    name: Analyse (${{ matrix.language }})
+    # Blacksmith for pushes to main and for pull requests, and GitHub for a Dependabot pull request,
+    # as in the tests workflow.
+    runs-on: ${{ github.event.pull_request.user.login == 'dependabot[bot]' && 'ubuntu-24.04' || 'blacksmith-2vcpu-ubuntu-2404' }}
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      # To upload the results to the Security tab of the repository.
+      security-events: write
+    strategy:
+      fail-fast: false
+      matrix:
+        language: [javascript-typescript, actions]
+    steps:
+      # Pinned to a commit, because a tag can be moved to other code.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: github/codeql-action/init@2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2 # v4.38.2
+        with:
+          languages: ${{ matrix.language }}
+          # Neither language needs a build to be analysed.
+          build-mode: none
+      - uses: github/codeql-action/analyze@2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2 # v4.38.2
+        with:
+          category: /language:${{ matrix.language }}
