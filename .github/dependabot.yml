@@ -1,0 +1,40 @@
+# Dependabot opens a pull request for each update, and a person merges it. Nothing merges
+# automatically. A security update comes as soon as GitHub knows of the advisory, whatever
+# the schedule below says.
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: monthly
+      time: '05:00'
+      timezone: Europe/London
+    open-pull-requests-limit: 5
+    # Gives build(deps): and build(deps-dev): subjects, as the commit spec asks for.
+    commit-message:
+      prefix: build
+      prefix-development: build
+      include: scope
+    # One pull request for the minor and patch updates of each kind. A major update comes alone,
+    # because it can break the API.
+    groups:
+      production:
+        dependency-type: production
+        update-types: [minor, patch]
+      development:
+        dependency-type: development
+        update-types: [minor, patch]
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+      time: '05:00'
+      timezone: Europe/London
+    # Dependabot moves the commit hash of a pinned action and the version comment beside it.
+    commit-message:
+      prefix: ci
+      include: scope
+    groups:
+      actions:
+        patterns: ['*']
