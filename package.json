@@ -38,15 +38,15 @@
     "zod": "^3.25.76"
   },
   "devDependencies": {
-    "@types/node": "^26.6.2",
+    "@types/node": "^26.6.3",
     "@typescript-eslint/eslint-plugin": "^8.70.1",
     "@typescript-eslint/parser": "^8.70.1",
     "@vitest/coverage-v8": "4.1.11",
-    "dotenv": "^18.0.3",
+    "dotenv": "^18.0.4",
     "eslint": "^8.57.1",
     "eslint-config-prettier": "^9.1.2",
     "eslint-plugin-prettier": "^5.5.4",
-    "prettier": "^3.7.4",
+    "prettier": "^3.9.9",
     "typescript": "^5.9.3",
     "vitest": "4.1.11"
   },
