@@ -12,7 +12,7 @@ supervised:
   at: 2026-09-23T01:03:52Z
 edited:
   by: claude-code/opus-5.5
-  at: 2026-09-30T21:46:31Z
+  at: 2026-09-30T22:22:18Z
 ---
 
 # Trello MCP
@@ -21,6 +21,7 @@ edited:
 [![Smoke](https://img.shields.io/github/actions/workflow/status/brainquiver/trello-mcp/smoke.yml?branch=main&style=for-the-badge&logo=trello&logoColor=white&label=smoke)](https://github.com/brainquiver/trello-mcp/actions/workflows/smoke.yml)
 [![Licence](https://img.shields.io/github/license/brainquiver/trello-mcp?style=for-the-badge&color=blue&label=licence)](LICENSE)
 [![Node](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fbrainquiver%2Ftrello-mcp%2Fmain%2Fpackage.json&query=%24.engines.node&label=node&logo=nodedotjs&logoColor=white&color=339933&style=for-the-badge)](package.json)
+[![OpenSSF Scorecard](https://img.shields.io/ossf-scorecard/github.com/brainquiver/trello-mcp?style=for-the-badge&label=openssf%20scorecard)](https://scorecard.dev/viewer/?uri=github.com/brainquiver/trello-mcp)
 
 ![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
 ![MCP](https://img.shields.io/badge/MCP-server-000000?style=for-the-badge&logo=modelcontextprotocol&logoColor=white)
@@ -45,6 +46,7 @@ The server goes as far as one Trello account and the boards that the account can
 | **Retries, the rate limit and the workspace guard** | `src/trello/client.ts`, `src/trello/rate-limiter.ts`, `src/trello/workspace-guard.ts` |
 | **Trimmed replies and the markdown card** | `src/reply/` |
 | **The agent skill** | `skills/trello-mcp/` |
+| **Security policy** | `.github/SECURITY.md` |
 
 **An agent gets every reply trimmed to what it reads, and every refusal with its reason.**
 
@@ -109,11 +111,13 @@ The two suites answer different questions, and they live apart.
 
 The smoke suite skips itself when one of its three settings is absent, so `npm test` needs no Trello account. The smoke suite starts the built server, so `npm test` and `npm run test:smoke` run `npm run build` first. The unit suite runs against the source, and `npm run test:unit` does not build. A full smoke run took 96 seconds on 2026-09-30, and its search test can wait up to 5 minutes for Trello's search index.
 
-GitHub Actions runs both suites, with the two workflows in `.github/workflows/`. The tests workflow runs the typecheck, the lint, the build and the unit tests on Node.js 22 and 24. It runs on Blacksmith runners for each push to `main` and each pull request. A Dependabot pull request runs on GitHub-hosted runners. The smoke workflow runs the smoke suite on GitHub-hosted runners, after each push to `main`, every second Monday at 05:17 UTC, and on demand. It fails when a setting is absent, so a missing secret cannot give a green run with no tests.
+GitHub Actions runs both suites, through the tests and smoke workflows in `.github/workflows/`. The tests workflow runs the typecheck, the lint, the build and the unit tests on Node.js 22 and 24. It runs on Blacksmith runners for each push to `main` and each pull request. A Dependabot pull request runs on GitHub-hosted runners. The smoke workflow runs the smoke suite on GitHub-hosted runners, after each push to `main`, every second Monday at 05:17 UTC, and on demand. It fails when a setting is absent, so a missing secret cannot give a green run with no tests.
 
 The smoke workflow reads the key and the token from the secrets of the GitHub environment `smoke`. It reads the five test IDs from the variables of that environment. The environment admits the `main` branch alone, so a pull request from a fork never reaches the secrets. They belong to the test account `svc-trello-ci@brainquiver.ai`, which can reach only the test boards.
 
 Dependabot checks the npm packages and the pinned actions once a month, and it opens a pull request for each update. A security advisory gets a pull request at once. A person merges each one, because nothing merges automatically.
+
+CodeQL and the OpenSSF Scorecard check the security of the repository. The CodeQL workflow analyses the TypeScript, the JavaScript and the workflow files. It runs on each pull request, each push to `main` and every Monday, on the same runners as the tests. The Scorecard workflow scores the security practice of the repository after each push to `main` and every Monday. The Scorecard service requires GitHub's own runners for a published score. Both report to the Security tab, and `.github/SECURITY.md` gives the private way to report a vulnerability.
 
 ### 1.4 Server Checks
 
@@ -135,8 +139,9 @@ When an agent reports that the server is down, or that a tool is absent, take th
     src/reply/              what goes back to the agent: the reply helpers, the shapers, the markdown card
     tests/unit/             offline tests against a mocked Trello, one file for each source file
     tests/smoke/            live tests against the Trello web API, on a scratch board
-    .github/workflows/      the unit workflow for every push, and the smoke workflow for main and every second Monday
+    .github/workflows/      the tests, smoke, CodeQL and Scorecard workflows
     .github/dependabot.yml  the monthly update checks for the npm packages and the actions
+    .github/SECURITY.md     the security policy, and the private way to report a vulnerability
     skills/trello-mcp/      the agent skill: SKILL.md, and every tool in references/tools.md
     build/                  the compiled server, which npm run build writes and git ignores
 
