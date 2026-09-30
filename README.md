@@ -97,6 +97,10 @@ The two suites answer different questions, and they live apart.
 
 The smoke suite skips itself when one of its three settings is absent, so `npm test` needs no Trello account. The smoke suite starts the built server, so `npm test` and `npm run test:smoke` run `npm run build` first. The unit suite runs against the source, and `npm run test:unit` does not build. A full smoke run took 96 seconds on 2026-09-30, and its search test can wait up to 5 minutes for Trello's search index.
 
+GitHub Actions runs both suites, with the two workflows in `.github/workflows/`. The tests workflow runs the typecheck, the lint, the build and the unit tests on Node.js 22 and 24. It runs on every push and every pull request. The smoke workflow runs the smoke suite after each push to `main`, every day at 05:17 UTC, and on demand. It fails when a setting is absent, so a missing secret cannot give a green run with no tests.
+
+The smoke workflow reads the key and the token from the secrets of the GitHub environment `smoke`. It reads the five test IDs from the variables of that environment. The environment admits the `main` branch alone, so a pull request from a fork never reaches the secrets. They belong to the test account `svc-trello-ci@brainquiver.ai`, which can reach only the test boards.
+
 ### 1.4 Server Checks
 
 When an agent reports that the server is down, or that a tool is absent, take these steps in order.
@@ -117,6 +121,7 @@ When an agent reports that the server is down, or that a tool is absent, take th
     src/reply/              what goes back to the agent: the reply helpers, the shapers, the markdown card
     tests/unit/             offline tests against a mocked Trello, one file for each source file
     tests/smoke/            live tests against the Trello web API, on a scratch board
+    .github/workflows/      the unit workflow for every push, and the smoke workflow for main and each day
     skills/trello-mcp/      the agent skill: SKILL.md, and every tool in references/tools.md
     build/                  the compiled server, which npm run build writes and git ignores
 
