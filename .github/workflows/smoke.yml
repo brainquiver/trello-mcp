@@ -7,8 +7,9 @@ on:
   push:
     branches: [main]
   schedule:
-    # Every day at 05:17 UTC. Trello can change its API without a push here.
-    - cron: '17 5 * * *'
+    # Every Monday at 05:17 UTC. The week job lets every second one through. A push tests each
+    # change here, so the schedule only has to catch a change on the Trello side.
+    - cron: '17 5 * * 1'
   workflow_dispatch:
 
 permissions:
@@ -20,7 +21,26 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  # Cron cannot say "every second week", so a scheduled run goes on in odd weeks only. The count
+  # is whole weeks since 1970. An ISO week number would run twice in a row after a week 53.
+  week:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    outputs:
+      run: ${{ steps.week.outputs.run }}
+    steps:
+      - id: week
+        run: |
+          if [ "${{ github.event_name }}" != schedule ] || [ $(( $(date -u +%s) / 604800 % 2 )) -eq 1 ]; then
+            echo "run=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "run=false" >> "$GITHUB_OUTPUT"
+            echo "An even week, so the scheduled smoke run waits for next Monday."
+          fi
+
   smoke:
+    needs: week
+    if: needs.week.outputs.run == 'true'
     runs-on: ubuntu-latest
     environment: smoke
     # The search test can wait 5 minutes for the Trello search index.
