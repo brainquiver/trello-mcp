@@ -89,6 +89,20 @@ export function action(value: unknown): Obj {
   return out;
 }
 
+/** A custom field of a board. The options of a list field are what an agent picks from. */
+export function customField(value: unknown): Obj {
+  const out = pick(value, ['id', 'name', 'type', 'optionsError']);
+  if (isObj(value) && Array.isArray(value.options)) {
+    out.options = value.options.map(option => pick(option, ['id', 'value']));
+  }
+  return out;
+}
+
+/** The value of one custom field on one card. A cleared value is null, and it stays null. */
+export function customFieldItem(value: unknown): Obj {
+  return pick(value, ['idCustomField', 'idModel', 'value', 'idValue']);
+}
+
 export function card(value: unknown): Obj {
   if (!isObj(value)) return {};
   const out = pick(value, [

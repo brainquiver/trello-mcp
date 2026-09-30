@@ -103,7 +103,7 @@ Warning: everyone on the board can read a comment.
 
 ## 6. Replies
 
-Each reply is compact JavaScript Object Notation (JSON) that holds the fields an agent reads, under the names that Trello uses. An ID in a reply is therefore ready for the next call. Twelve read tools take `raw: true`, and then they return Trello's full reply. The tables in [references/tools.md](references/tools.md) show which ones. `get_card` with `includeMarkdown: true` returns the card as readable markdown, and markdown wins when both are set. `download_attachment` returns an image as an image and any other file as base64 text. It returns only a file that was uploaded to Trello, up to 5 megabytes (MB) by default or the number in `TRELLO_MAX_DOWNLOAD_MB`.
+Each reply is compact JavaScript Object Notation (JSON) that holds the fields an agent reads, under the names that Trello uses. An ID in a reply is therefore ready for the next call. Thirteen read tools take `raw: true`, and then they return Trello's full reply. The tables in [references/tools.md](references/tools.md) show which ones. `get_card` with `includeMarkdown: true` returns the card as readable markdown, and markdown wins when both are set. `download_attachment` returns an image as an image and any other file as base64 text. It returns only a file that was uploaded to Trello, up to 5 megabytes (MB) by default or the number in `TRELLO_MAX_DOWNLOAD_MB`.
 
 ## 7. Traps
 

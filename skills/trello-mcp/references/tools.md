@@ -140,5 +140,5 @@ These two tools read and set the custom fields that a board already has. No tool
 
 | Tool | Required | Optional | Result |
 | --- | --- | --- | --- |
-| **`get_board_custom_fields`** | | `boardId` | The custom fields of a board, with the options of each list field. |
+| **`get_board_custom_fields`** | | `boardId`, `raw` | The custom fields of a board, with the options of each list field. |
 | **`update_card_custom_field`** | `cardId`, `customFieldId`, `type` | `value` | A custom field value set or cleared on a card. `type` is `text`, `number`, `checkbox`, `date`, `list` or `clear`. Every type except `clear` needs `value`, and for `list`, `value` is the ID of the option. |

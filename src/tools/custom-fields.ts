@@ -2,6 +2,7 @@ import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { McpError, ErrorCode } from '@modelcontextprotocol/sdk/types.js';
 import { z } from './zod.js';
 import { TrelloClient } from '../trello/client.js';
+import * as shape from '../reply/shape.js';
 import { json, safe } from '../reply/respond.js';
 
 /** The custom field tools. They read and set fields that already exist on a board. */
@@ -19,9 +20,14 @@ export function registerCustomFieldTools(server: McpServer, client: TrelloClient
           .string()
           .optional()
           .describe('ID of the Trello board (uses default if not provided)'),
+        raw: z
+          .boolean()
+          .optional()
+          .default(false)
+          .describe("Return Trello's full reply instead of the trimmed one (default: false)"),
       },
     },
-    async ({ boardId }) =>
+    async ({ boardId, raw }) =>
       safe(async () => {
         const fields = await client.getBoardCustomFields(boardId);
 
@@ -44,7 +50,14 @@ export function registerCustomFieldTools(server: McpServer, client: TrelloClient
         );
 
         return {
-          content: [{ type: 'text' as const, text: JSON.stringify(fieldsWithOptions) }],
+          content: [
+            {
+              type: 'text' as const,
+              text: JSON.stringify(
+                raw ? fieldsWithOptions : fieldsWithOptions.map(shape.customField)
+              ),
+            },
+          ],
         };
       })
   );
@@ -81,6 +94,6 @@ export function registerCustomFieldTools(server: McpServer, client: TrelloClient
           throw new McpError(ErrorCode.InvalidParams, 'value is required when type is not "clear"');
         }
         return client.updateCardCustomField(cardId, customFieldId, { type, value });
-      })
+      }, shape.customFieldItem)
   );
 }

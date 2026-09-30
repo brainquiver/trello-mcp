@@ -94,10 +94,26 @@ const routes: Record<string, Route> = {
   'GET /boards/b1/members': [member],
   'GET /boards/b1/cards/53': { id: 'c1' },
   'GET /boards/b1/customFields': [
-    { id: 'f1', name: 'Size', type: 'text', idModel: 'b1' },
-    { id: 'f2', name: 'Team', type: 'list', idModel: 'b1' },
+    {
+      id: 'f1',
+      name: 'Size',
+      type: 'text',
+      idModel: 'b1',
+      fieldGroup: 'g1',
+      display: { cardFront: true },
+    },
+    {
+      id: 'f2',
+      name: 'Team',
+      type: 'list',
+      idModel: 'b1',
+      fieldGroup: 'g2',
+      display: { cardFront: true },
+    },
   ],
-  'GET /customFields/f2/options': [{ id: 'o1', value: { text: 'Core' } }],
+  'GET /customFields/f2/options': [
+    { id: 'o1', idCustomField: 'f2', value: { text: 'Core' }, color: 'none', pos: 1024 },
+  ],
   'GET /organizations/w1': workspace,
   'GET /organizations/w1/boards': [board],
   'POST /boards': (body: any) => ({ ...board, id: 'b9', name: body.name }),
@@ -158,7 +174,14 @@ const routes: Record<string, Route> = {
   // Trello replies to a member change with the members on the card, and not with the card.
   'POST /cards/c1/idMembers': [member],
   'DELETE /cards/c1/idMembers/m1': [],
-  'PUT /cards/c1/customField/f1/item': { id: 'cf1', idCustomField: 'f1', value: { text: 'L' } },
+  'PUT /cards/c1/customField/f1/item': {
+    id: 'cf1',
+    idCustomField: 'f1',
+    idModel: 'c1',
+    modelType: 'card',
+    value: { text: 'L' },
+    idValue: null,
+  },
 };
 
 type Sent = { method: string; path: string; params: any; body: any };
@@ -419,6 +442,24 @@ describe('server', () => {
         type: 'image',
         data: Buffer.from('png').toString('base64'),
         mimeType: 'image/png',
+      });
+    });
+
+    it('trims the custom fields of a board, and keeps the options of a list field', async () => {
+      expect(await reply('get_board_custom_fields')).toEqual([
+        { id: 'f1', name: 'Size', type: 'text' },
+        { id: 'f2', name: 'Team', type: 'list', options: [{ id: 'o1', value: { text: 'Core' } }] },
+      ]);
+      const [full] = await reply('get_board_custom_fields', { raw: true });
+      expect(full.fieldGroup).toBe('g1');
+    });
+
+    it('trims the custom field value that update_card_custom_field returns', async () => {
+      expect(await reply('update_card_custom_field')).toEqual({
+        idCustomField: 'f1',
+        idModel: 'c1',
+        value: { text: 'L' },
+        idValue: null,
       });
     });
 

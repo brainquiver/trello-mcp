@@ -278,6 +278,48 @@ describe('shape', () => {
     });
   });
 
+  it('should keep the name, type and options of a custom field, and drop display data', () => {
+    expect(
+      shape.customField({
+        id: 'f2',
+        idModel: 'b1',
+        modelType: 'board',
+        fieldGroup: 'g2',
+        display: { cardFront: true },
+        name: 'Team',
+        pos: 16384,
+        type: 'list',
+        options: [
+          { id: 'o1', idCustomField: 'f2', value: { text: 'Core' }, color: 'none', pos: 1 },
+        ],
+      })
+    ).toEqual({
+      id: 'f2',
+      name: 'Team',
+      type: 'list',
+      options: [{ id: 'o1', value: { text: 'Core' } }],
+    });
+    expect(shape.customField({ id: 'f3', name: 'Tier', type: 'list', optionsError: 'x' })).toEqual({
+      id: 'f3',
+      name: 'Tier',
+      type: 'list',
+      optionsError: 'x',
+    });
+  });
+
+  it('should keep a cleared custom field value as null', () => {
+    expect(
+      shape.customFieldItem({
+        id: 'cf1',
+        idCustomField: 'f1',
+        idModel: 'c1',
+        modelType: 'card',
+        value: null,
+        idValue: null,
+      })
+    ).toEqual({ idCustomField: 'f1', idModel: 'c1', value: null, idValue: null });
+  });
+
   it('should apply a shaper to each entry of an array, and leave anything else', () => {
     const lists = shape.many(shape.list);
     expect(lists([{ id: 'l1', name: 'A', softLimit: 1 }])).toEqual([{ id: 'l1', name: 'A' }]);
