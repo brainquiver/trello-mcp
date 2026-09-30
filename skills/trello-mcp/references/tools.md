@@ -64,13 +64,13 @@ These twelve tools find, read, make, change and archive cards.
 | --- | --- | --- | --- |
 | **`get_cards_by_list_id`** | `listId` | `boardId`, `fields`, `nameFilter`, `descMaxLength`, `omitDescThresholdBytes`, `raw` | The cards in a list. Each description is cut to 200 characters by default, and all of them are dropped when the reply passes 50,000 bytes. With `fields`, each card holds its ID and exactly the fields named, untrimmed. |
 | **`get_my_cards`** | | `raw` | The cards that the user is a member of. |
-| **`search_cards`** | `query` | `boardId`, `limit` | The cards with the words in their name or description, 20 by default and at most 100. |
+| **`search_cards`** | `query` | `boardId`, `limit` | The cards with the words in their name or description, 20 by default and at most 100. A card that was made in the last few minutes may be absent, because Trello indexes it after a delay. Archived cards come back too, with `closed` set to true. |
 | **`get_card`** | `cardId` or `cardNumber` | `boardId`, `includeMarkdown`, `raw` | One card in full, with its labels, members, checklists, attachments and comments. |
 | **`get_card_history`** | `cardId` | `filter`, `limit`, `raw` | The actions on a card, all of them by default. `filter` takes an action type, as `updateCard:idList`. |
 | **`add_card_to_list`** | `listId`, `name` | `boardId`, `description`, `dueDate`, `dueReminder`, `start`, `labels` | A new card. `dueReminder` is a number of minutes before the due date. |
 | **`add_cards_to_list`** | `listId`, `cards` | | Up to 50 new cards, in order. Each card takes `name`, and it can take `description`, `dueDate`, `start` and `labels`. |
 | **`update_card_details`** | `cardId` or `cardNumber` | `boardId`, `name`, `description`, `dueDate`, `dueReminder`, `start`, `dueComplete`, `labels`, `pos` | A changed card. `labels` replaces every label on the card. |
-| **`move_card`** | `cardId`, `listId` | `boardId`, `pos` | The card in the list, on the board of that list. |
+| **`move_card`** | `cardId`, `listId` | `boardId`, `pos` | The card in the list, on the board of that list. On another board, the card gets a new number. |
 | **`copy_card`** | `sourceCardId`, `listId` | `name`, `description`, `keepFromSource`, `pos` | A copy of the card, on another board too. `keepFromSource` is `all` by default, or a list such as `checklists,labels`. |
 | **`archive_card`** | `cardId` or `cardNumber` | `boardId` | An archived card. |
 | **`watch_card`** | `cardId`, `subscribed` | | The user's Trello account subscribed to the card, or unsubscribed from it. |

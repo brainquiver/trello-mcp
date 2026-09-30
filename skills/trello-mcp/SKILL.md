@@ -18,7 +18,7 @@ Trello names each board, list, card, checklist, label and member with an identif
 | Input | Rule |
 | --- | --- |
 | **`boardId` left out** | The call uses the active board. That is the last board that `set_active_board` chose, and the server keeps it between runs. Before the first choice, it is the board in `TRELLO_BOARD_ID`. |
-| **`cardNumber`** | The number that Trello shows on a card, and the number that a branch name carries, as 53 in `fix/53-chat-button`. `get_card`, `update_card_details` and `archive_card` take it in place of `cardId`. It needs `boardId` or an active board. |
+| **`cardNumber`** | The number that Trello shows on a card, and the number that a branch name carries, as 53 in `fix/53-chat-button`. `get_card`, `update_card_details` and `archive_card` take it in place of `cardId`. It needs `boardId` or an active board. Trello gives a card a new number on each board that it moves to. |
 | **`boardId` with a list or a card** | A check. When the list or the card is on another board, the server refuses the call before it changes anything. A board matches by its ID or by the short link in its URL. |
 
 ## 3. Card Discovery
@@ -28,7 +28,7 @@ Use the first row that matches what you know.
 | What you know | Call |
 | --- | --- |
 | **The card number** | `get_card` with `cardNumber` |
-| **Words from the card** | `search_cards` with `query`. A word matches as a prefix. |
+| **Words from the card** | `search_cards` with `query`. A word matches as a prefix. Trello adds a new card to its search index after a few minutes. |
 | **The list** | `get_cards_by_list_id`, with `nameFilter` for part of the card name |
 | **The board only** | `get_lists`, then `get_cards_by_list_id` on the likely lists |
 | **Only the task** | `list_boards`, then ask the user which board to use |
@@ -56,7 +56,7 @@ A card follows these rules. The server itself refuses a description over the lim
 2. Run the narrowest tool for the change, as `update_card_details` or `move_card`.
 3. Run `get_card` again to confirm the result.
 
-`move_card` puts the card on the board of the list that you give, so a move to another board takes the same inputs.
+`move_card` puts the card on the board of the list that you give, so a move to another board takes the same inputs. After a move to another board, the card has a new number. Read it from the reply.
 
 ### 5.2 New Card with Acceptance Criteria
 
