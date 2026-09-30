@@ -56,7 +56,7 @@ The server reads its settings from the environment when it starts. It reads no `
 
 | Setting | Need | Effect |
 | --- | --- | --- |
-| **`TRELLO_API_KEY`** | required | The key of the Trello account, from `https://trello.com/app-key`. |
+| **`TRELLO_API_KEY`** | required | The API key of a Trello app, from `https://trello.com/power-ups/admin`, as `example.env` describes. |
 | **`TRELLO_TOKEN`** | required | The token of the same account, from the authorisation address in `example.env`. |
 | **`TRELLO_BOARD_ID`** | optional | The first active board, section 3. |
 | **`TRELLO_ALLOWED_WORKSPACES`** | optional | Workspace IDs, separated by commas. When set, the workspace guard of section 3 is on. |
@@ -65,6 +65,7 @@ The server reads its settings from the environment when it starts. It reads no `
 | **`TRELLO_MAX_DOWNLOAD_MB`** | optional | The largest file that `download_attachment` returns, in megabytes (MB). The default is 5. |
 | **`https_proxy` or `HTTPS_PROXY`** | optional | A proxy for every call to Trello. |
 | **`TRELLO_TEST_BOARD_ID`** | smoke tests only | The scratch board of section 1.3. |
+| **`TRELLO_TEST_OTHER_BOARD_ID`**, **`TRELLO_TEST_WORKSPACE_ID`**, **`TRELLO_TEST_REFUSED_WORKSPACE_ID`**, **`TRELLO_TEST_REFUSED_BOARD_ID`** | smoke tests only, optional | A second board in the workspace of the scratch board, that workspace, another workspace, and a board in it. Each one turns on the move test or the workspace guard tests. |
 
 ### 1.2 Agent Connection
 
@@ -92,9 +93,9 @@ The two suites answer different questions, and they live apart.
 | Suite | Folder | Needs | Proves |
 | --- | --- | --- | --- |
 | **Unit** | `tests/unit/` | only `npm ci` | The code does what we think Trello expects. Every call goes to a mocked Trello. |
-| **Smoke** | `tests/smoke/` | `TRELLO_API_KEY`, `TRELLO_TOKEN` and `TRELLO_TEST_BOARD_ID` in `.env` | Trello accepts the calls. The suite starts `build/index.js` and calls its tools over MCP. |
+| **Smoke** | `tests/smoke/` | `TRELLO_API_KEY`, `TRELLO_TOKEN` and `TRELLO_TEST_BOARD_ID` in `.env`, and the optional test settings of section 1.1 | Trello accepts the calls. The suite starts `build/index.js` and calls its tools over MCP. |
 
-The smoke suite skips itself when one of its three settings is absent, so `npm test` needs no Trello account. The smoke suite starts the built server, so `npm test` and `npm run test:smoke` run `npm run build` first. The unit suite runs against the source, and `npm run test:unit` does not build.
+The smoke suite skips itself when one of its three settings is absent, so `npm test` needs no Trello account. The smoke suite starts the built server, so `npm test` and `npm run test:smoke` run `npm run build` first. The unit suite runs against the source, and `npm run test:unit` does not build. A full smoke run took 96 seconds on 2026-09-30, and its search test can wait up to 5 minutes for Trello's search index.
 
 ### 1.4 Server Checks
 
@@ -193,4 +194,4 @@ The 52 tools, with every input of each, are in [skills/trello-mcp/references/too
 | **The workspace guard accepts workspace IDs only** | Trello identifies a board's workspace by its ID, so a workspace name in `TRELLO_ALLOWED_WORKSPACES` does not match. |
 | **Custom fields must exist before a tool can set them** | No tool creates a custom field, so a person adds each field in Trello first. |
 | **At most 100 calls in 10 seconds for each token** | Trello sets this limit, and the server queues calls to stay within it. |
-| **Live tests cover upstream's tools only** | The features that this fork added are tested offline, against a mocked Trello. |
+| **A new card is absent from search for a few minutes** | Trello adds a new card to its search index after a delay, which was 2 to 4 minutes in the smoke tests. |
