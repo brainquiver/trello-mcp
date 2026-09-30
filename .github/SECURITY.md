@@ -22,7 +22,7 @@ The repository does not publish releases, so the `main` branch is the only suppo
 
 ## 2. Vulnerability Reports
 
-A vulnerability report goes privately to the maintainer, through the Security tab of this repository and its Report a vulnerability form. A public issue or pull request would show the fault to everyone before a fix exists, so a vulnerability goes through the private form alone. A useful report names the commit, the tool and the input that trigger the fault, and it says what an attacker could gain. Made-up keys, tokens and boards are enough to show a fault, so a report never needs real credentials.
+A vulnerability report goes privately to the maintainer, through the [Report a vulnerability](https://github.com/brainquiver/trello-mcp/security/advisories/new) form in the Security tab of this repository. A public issue or pull request would show the fault to everyone before a fix exists, so a vulnerability goes through the private form alone. A useful report names the commit, the tool and the input that trigger the fault, and it says what an attacker could gain. Made-up keys, tokens and boards are enough to show a fault, so a report never needs real credentials.
 
 ## 3. Scope
 
