@@ -17,16 +17,29 @@ const WORKSPACE_ID = process.env.TRELLO_TEST_WORKSPACE_ID;
 const REFUSED_BOARD_ID = process.env.TRELLO_TEST_REFUSED_BOARD_ID;
 const REFUSED_WORKSPACE_ID = process.env.TRELLO_TEST_REFUSED_WORKSPACE_ID;
 
-// A call straight to Trello, for setup that no tool does, as a custom field.
+// A call straight to Trello, for setup that no tool does, as a custom field. A lost connection
+// or a 5xx is tried again twice, because one network fault on a CI runner stopped a whole run.
+// A repeated create can leave a second field, so the cleanup removes every field by its name.
 async function trelloApi(method: string, route: string, body?: unknown): Promise<any> {
   const auth = `key=${TRELLO_API_KEY}&token=${TRELLO_TOKEN}`;
-  const response = await fetch(`https://api.trello.com/1${route}?${auth}`, {
-    method,
-    headers: { 'content-type': 'application/json' },
-    body: body === undefined ? undefined : JSON.stringify(body),
-  });
-  if (!response.ok) throw new Error(`${method} ${route}: Trello returned ${response.status}`);
-  return response.json();
+  for (let attempt = 1; ; attempt++) {
+    let response: Response | undefined;
+    try {
+      response = await fetch(`https://api.trello.com/1${route}?${auth}`, {
+        method,
+        headers: { 'content-type': 'application/json' },
+        body: body === undefined ? undefined : JSON.stringify(body),
+      });
+    } catch (error) {
+      // fetch throws a TypeError when the connection fails.
+      if (!(error instanceof TypeError) || attempt === 3) throw error;
+    }
+    if (response?.ok) return response.json();
+    if (response && (response.status < 500 || attempt === 3)) {
+      throw new Error(`${method} ${route}: Trello returned ${response.status}`);
+    }
+    await new Promise(resolve => setTimeout(resolve, 2000 * attempt));
+  }
 }
 
 /**
@@ -752,7 +765,10 @@ describe.skipIf(!canRunSmoke)('Smoke Tests (Live Trello API)', () => {
     });
 
     afterAll(async () => {
-      if (fieldId) await trelloApi('DELETE', `/customFields/${fieldId}`);
+      const fields = await trelloApi('GET', `/boards/${TEST_BOARD_ID}/customFields`);
+      for (const field of fields.filter((each: any) => each.name === 'Smoke size')) {
+        await trelloApi('DELETE', `/customFields/${field.id}`);
+      }
     });
 
     it('lists, sets and clears a text field', async () => {
