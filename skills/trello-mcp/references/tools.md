@@ -136,7 +136,7 @@ A member is a person with access to the board.
 
 ## 10. Custom Fields
 
-These two tools need a paid Trello plan, and Trello refuses them on the free plan.
+These two tools read and set the custom fields that a board already has. No tool creates a field, so the user adds each one in Trello.
 
 | Tool | Required | Optional | Result |
 | --- | --- | --- | --- |

@@ -115,6 +115,6 @@ Each row gives the condition first and the action after it, as a warning does.
 | **A reply says "Refused by the workspace guard"** | Stop. The object is outside the workspaces that the user allows. Tell the user. Do not try another way to reach it. |
 | **A `file://` source is refused** | Use an `https://` link or a `data:` source. Or ask the user to set `TRELLO_ATTACH_ROOT`. |
 | **The user asks to watch a card or a list** | `watch_card` and `watch_list` subscribe the user's Trello account, so the notifications go to the user alone. |
-| **A custom field tool is refused** | The custom field tools need a paid Trello plan. On the free plan, Trello refuses them. |
+| **`get_board_custom_fields` returns an empty list** | The board has no custom fields. No tool creates one, so ask the user to add the field in Trello. |
 | **A write fails** | Read the object again before you retry. It may have moved, or somebody may have archived it. |
 | **Many calls go out in a short time** | Trello allows 100 calls in 10 seconds for each token. The server queues the calls and retries a refusal. Read a board once. Then reuse what it returned. |

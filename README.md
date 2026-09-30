@@ -29,7 +29,7 @@ The server goes as far as one Trello account and the boards that the account can
 | **Checklists and acceptance criteria** | `src/tools/checklists.ts`, `src/trello/checklists.ts` |
 | **Attachments: links, local files and inline data** | `src/tools/attachments.ts`, `src/trello/attachments.ts` |
 | **Labels and members** | `src/tools/labels.ts`, `src/tools/members.ts` |
-| **Custom fields, on a paid Trello plan** | `src/tools/custom-fields.ts` |
+| **Custom fields** | `src/tools/custom-fields.ts` |
 | **Retries, the rate limit and the workspace guard** | `src/trello/client.ts`, `src/trello/rate-limiter.ts`, `src/trello/workspace-guard.ts` |
 | **Trimmed replies and the markdown card** | `src/reply/` |
 | **The agent skill** | `skills/trello-mcp/` |
@@ -191,6 +191,6 @@ The 52 tools, with every input of each, are in [skills/trello-mcp/references/too
 | **Downloads are limited to 5 MB by default** | A download returns as base64 in the agent's context, about a third larger than the file. `TRELLO_MAX_DOWNLOAD_MB` changes the limit. |
 | **Attachment links must use `https://` and a public address** | Plain HTTP can be read or altered in transit, and a private address exposes the local network. |
 | **The workspace guard accepts workspace IDs only** | Trello identifies a board's workspace by its ID, so a workspace name in `TRELLO_ALLOWED_WORKSPACES` does not match. |
-| **Custom fields need a paid Trello plan** | Trello provides custom fields only on its paid plans. |
+| **Custom fields must exist before a tool can set them** | No tool creates a custom field, so a person adds each field in Trello first. |
 | **At most 100 calls in 10 seconds for each token** | Trello sets this limit, and the server queues calls to stay within it. |
 | **Live tests cover upstream's tools only** | The features that this fork added are tested offline, against a mocked Trello. |

@@ -4,7 +4,7 @@ import { z } from './zod.js';
 import { TrelloClient } from '../trello/client.js';
 import { json, safe } from '../reply/respond.js';
 
-/** The custom field tools. Trello needs a paid plan for these. */
+/** The custom field tools. They read and set fields that already exist on a board. */
 export function registerCustomFieldTools(server: McpServer, client: TrelloClient): void {
   server.registerTool(
     'get_board_custom_fields',
@@ -13,7 +13,7 @@ export function registerCustomFieldTools(server: McpServer, client: TrelloClient
       description:
         'Get all custom field definitions on a board. Returns field IDs, names, and types. ' +
         'For dropdown/list fields, also returns available options with their IDs. ' +
-        'Requires Trello Standard plan or higher.',
+        'No tool creates a field, so a board without fields returns an empty list.',
       inputSchema: {
         boardId: z
           .string()
@@ -54,7 +54,7 @@ export function registerCustomFieldTools(server: McpServer, client: TrelloClient
     {
       title: 'Update Card Custom Field',
       description:
-        'Set or clear a custom field value on a card. Requires Trello Standard plan or higher. ' +
+        'Set or clear a custom field value on a card. ' +
         'Use get_board_custom_fields first to find field IDs and types. ' +
         'Value format depends on type: text=any string, number=numeric string, ' +
         'checkbox="true"/"false", date=ISO 8601 string, list=option ID from get_board_custom_fields. ' +
