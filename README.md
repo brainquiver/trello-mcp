@@ -12,7 +12,7 @@ supervised:
   at: 2026-09-23T01:03:52Z
 edited:
   by: claude-code/opus-5.5
-  at: 2026-09-30T22:22:18Z
+  at: 2026-10-01T10:53:39Z
 ---
 
 # Trello MCP
@@ -143,6 +143,7 @@ When an agent reports that the server is down, or that a tool is absent, take th
     .github/dependabot.yml  the monthly update checks for the npm packages and the actions
     .github/SECURITY.md     the security policy, and the private way to report a vulnerability
     skills/trello-mcp/      the agent skill: SKILL.md, and every tool in references/tools.md
+    docs/                   the roadmap
     build/                  the compiled server, which npm run build writes and git ignores
 
 ## 3. Concepts
