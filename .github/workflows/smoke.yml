@@ -6,6 +6,8 @@ name: Smoke
 on:
   push:
     branches: [main]
+    # A change to documents alone does not change what this workflow checks.
+    paths-ignore: ['**.md', 'LICENSE']
   schedule:
     # Every Monday at 05:17 UTC. The week job lets every second one through. A push tests each
     # change here, so the schedule only has to catch a change on the Trello side.

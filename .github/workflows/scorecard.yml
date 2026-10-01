@@ -8,6 +8,8 @@ name: Scorecard
 on:
   push:
     branches: [main]
+    # The Monday run scores a change to documents alone, such as one to the security policy.
+    paths-ignore: ['**.md', 'LICENSE']
   schedule:
     # Every Monday at 05:37 UTC, the default cadence of Scorecard. A score can change without a
     # push here, as when a pinned action gets a new release.
