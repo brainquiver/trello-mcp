@@ -19,8 +19,45 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  # A change to documents alone skips the heavy jobs below. A unit test compares the tool list
+  # under skills/ with the code, so a file there counts as code. Every other .md file and the
+  # LICENSE count as documents. This job and the gate at the end are short, so they run on GitHub.
+  changes:
+    name: Changes
+    runs-on: ubuntu-24.04
+    timeout-minutes: 2
+    outputs:
+      code: ${{ steps.diff.outputs.code }}
+    steps:
+      # Pinned to a commit, because a tag can be moved to other code.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          # The parent of the merge commit of a pull request is the tip of main, and so is the
+          # parent of a squash merge on main. One diff then serves both events.
+          fetch-depth: 2
+      - id: diff
+        env:
+          EVENT: ${{ github.event_name }}
+        run: |
+          code=false
+          if [ "$EVENT" != pull_request ] && [ "$EVENT" != push ]; then code=true; fi
+          files=$(git diff --name-only HEAD^1 HEAD) || code=true
+          [ -n "$files" ] || code=true
+          while IFS= read -r file; do
+            case "$file" in
+              skills/*) code=true ;;
+              *.md | LICENSE) ;;
+              *) code=true ;;
+            esac
+          done <<< "$files"
+          echo "code=$code" >> "$GITHUB_OUTPUT"
+          echo "Changed files:"; echo "$files"; echo "Code changed: $code"
+
   analyze:
     name: Analyse (${{ matrix.language }})
+    needs: changes
+    if: needs.changes.outputs.code == 'true'
     # Blacksmith for pushes to main and for pull requests, and GitHub for a Dependabot pull request,
     # as in the tests workflow.
     runs-on: ${{ github.event.pull_request.user.login == 'dependabot[bot]' && 'ubuntu-24.04' || 'blacksmith-2vcpu-ubuntu-2404' }}
@@ -46,3 +83,23 @@ jobs:
       - uses: github/codeql-action/analyze@2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2 # v4.38.2
         with:
           category: /language:${{ matrix.language }}
+
+  # The ruleset requires this job, and not the analyze jobs. A workflow that a path filter skips
+  # leaves its required checks waiting, and a skipped matrix job does not report the names of its
+  # matrix. This job reports in both cases: it passes when the code changed and every analyze job
+  # passed, or when only documents changed and the analyze jobs were skipped.
+  gate:
+    name: CodeQL
+    needs: [changes, analyze]
+    if: always()
+    runs-on: ubuntu-24.04
+    timeout-minutes: 2
+    steps:
+      - env:
+          CHANGES: ${{ needs.changes.result }}
+          CODE: ${{ needs.changes.outputs.code }}
+          RESULT: ${{ needs.analyze.result }}
+        run: |
+          echo "Changes: $CHANGES. Code changed: $CODE. analyze: $RESULT."
+          [ "$CHANGES" = success ]
+          if [ "$CODE" = true ]; then [ "$RESULT" = success ]; else [ "$RESULT" = skipped ]; fi
