@@ -12,7 +12,7 @@ supervised:
   at: 2026-09-23T01:03:52Z
 edited:
   by: claude-code/opus-5.5
-  at: 2026-10-01T13:41:05Z
+  at: 2026-10-01T15:53:21Z
 ---
 
 # Trello MCP
@@ -30,7 +30,7 @@ edited:
 
 This repository is a Model Context Protocol (MCP) server for Trello. An agent uses its 52 tools to read and change boards, lists, cards, checklists, comments, labels and attachments. The server runs on the user's machine and talks to the agent over standard input and output (stdio). It calls the Trello web API with the user's key and token. Every reply is written for an agent, which reads each word of it and pays for each word in context.
 
-Trello runs its own hosted MCP server, at `https://mcp.trello.com/v1`. That server cannot touch comments, and its support for checklists is limited, yet those are most of what a board is worth reading for. This server is a fork of `delorenj/mcp-server-trello`, taken at the tag `fork-point` on upstream commit `737292f` of 2026-09-15. The fork cuts the tools and the tooling that we do not run. It adds card numbers, duplicate-safe batches, a workspace guard, trimmed replies and limits that refuse with a reason.
+Trello runs its own hosted MCP server, at `https://mcp.trello.com/v1`. That server cannot touch comments, and its support for checklists is limited, yet those are most of what a board is worth reading for. This server is a fork of `delorenj/mcp-server-trello`, taken at the tag `fork-point` on upstream commit `737292f` of 2026-09-15. The fork drops the server's health and repair tools, fixes the broken tools, and merges the four attachment tools into one. It adds label and search tools, card numbers, duplicate-safe batches, a workspace guard, trimmed replies and limits that refuse with a reason.
 
 The server goes as far as one Trello account and the boards that the account can reach. It can archive a card or a list, but it cannot delete a card, a list or a board. It only responds to calls, so it does not react to changes made in Trello. The agent skill in `skills/trello-mcp/` tells an agent which tool to use and what to watch.
 
