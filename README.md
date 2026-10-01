@@ -12,7 +12,7 @@ supervised:
   at: 2026-09-23T01:03:52Z
 edited:
   by: claude-code/opus-5.5
-  at: 2026-10-01T15:53:21Z
+  at: 2026-10-01T16:15:45Z
 ---
 
 # Trello MCP
@@ -32,7 +32,7 @@ This repository is a Model Context Protocol (MCP) server for Trello. An agent us
 
 Trello runs its own hosted MCP server, at `https://mcp.trello.com/v1`. That server cannot touch comments, and its support for checklists is limited, yet those are most of what a board is worth reading for. This server is a fork of `delorenj/mcp-server-trello`, taken at the tag `fork-point` on upstream commit `737292f` of 2026-09-15. The fork drops the server's health and repair tools, fixes the broken tools, and merges the four attachment tools into one. It adds label and search tools, card numbers, duplicate-safe batches, a workspace guard, trimmed replies and limits that refuse with a reason.
 
-The server goes as far as one Trello account and the boards that the account can reach. It can archive a card or a list, but it cannot delete a card, a list or a board. It only responds to calls, so it does not react to changes made in Trello. The agent skill in `skills/trello-mcp/` tells an agent which tool to use and what to watch.
+The server goes as far as one Trello account and the boards that the account can reach. It can archive a card or a list, but it cannot delete a card, a list or a board. It only responds to calls, so it does not react to changes made in Trello. The agent skill in `skills/trello-mcp/` tells an agent which tool to use and what to watch. An agent gets every reply trimmed to what it reads, and every refusal with its reason.
 
 | What it covers | Where |
 | --- | --- |
@@ -49,7 +49,9 @@ The server goes as far as one Trello account and the boards that the account can
 | **The agent skill** | `skills/trello-mcp/` |
 | **Security policy** | `.github/SECURITY.md` |
 
-**An agent gets every reply trimmed to what it reads, and every refusal with its reason.**
+<br>
+
+![A Trello board for a made-up company, Real LTD, which an agent filled through this server: four lists of cards with coloured labels, due dates, checklists and a comment](docs/images/trello-mcp-board-wide.png)
 
 ## 1. Build and Run
 
@@ -145,6 +147,7 @@ When an agent reports that the server is down, or that a tool is absent, take th
     .github/SECURITY.md     the security policy, and the private way to report a vulnerability
     skills/trello-mcp/      the agent skill: SKILL.md, and every tool in references/tools.md
     docs/                   the roadmap and the assurance case
+    docs/images/            the wide screenshot in this readme, and a square one
     build/                  the compiled server, which npm run build writes and git ignores
 
 ## 3. Concepts
