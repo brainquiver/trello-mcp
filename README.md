@@ -12,7 +12,7 @@ supervised:
   at: 2026-09-23T01:03:52Z
 edited:
   by: claude-code/opus-5.5
-  at: 2026-10-01T11:32:44Z
+  at: 2026-10-01T12:56:36Z
 ---
 
 # Trello MCP
@@ -21,7 +21,9 @@ edited:
 [![Smoke](https://img.shields.io/github/actions/workflow/status/brainquiver/trello-mcp/smoke.yml?branch=main&style=for-the-badge&logo=trello&logoColor=white&label=smoke)](https://github.com/brainquiver/trello-mcp/actions/workflows/smoke.yml)
 [![Licence](https://img.shields.io/github/license/brainquiver/trello-mcp?style=for-the-badge&color=blue&label=licence)](LICENSE)
 [![Node](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fbrainquiver%2Ftrello-mcp%2Fmain%2Fpackage.json&query=%24.engines.node&label=node&logo=nodedotjs&logoColor=white&color=339933&style=for-the-badge)](package.json)
+
 [![OpenSSF Scorecard](https://img.shields.io/ossf-scorecard/github.com/brainquiver/trello-mcp?style=for-the-badge&label=openssf%20scorecard)](https://scorecard.dev/viewer/?uri=github.com/brainquiver/trello-mcp)
+[![OpenSSF Best Practices](https://img.shields.io/cii/level/15126?style=for-the-badge&label=openssf%20best%20practices)](https://www.bestpractices.dev/en/projects/15126)
 
 ![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
 ![MCP](https://img.shields.io/badge/MCP-server-000000?style=for-the-badge&logo=modelcontextprotocol&logoColor=white)
