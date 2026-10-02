@@ -49,7 +49,7 @@
     "eslint-plugin-prettier": "^5.5.4",
     "prettier": "^3.9.9",
     "typescript": "^5.9.3",
-    "vitest": "4.1.11"
+    "vitest": "5.0.2"
   },
   "prettier": {
     "semi": true,
