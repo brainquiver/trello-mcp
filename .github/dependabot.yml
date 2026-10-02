@@ -16,8 +16,15 @@ updates:
       prefix-development: build
       include: scope
     # One pull request for the minor and patch updates of each kind. A major update comes alone,
-    # because it can break the API.
+    # because it can break the API. The two pairs below are the exception.
     groups:
+      # @vitest/coverage-v8 requires the exact vitest version, and @eslint/js holds the recommended
+      # rules of one ESLint release, so each pair updates together, majors included. Dependabot
+      # puts a package in the first group that matches it, so these groups come first.
+      vitest:
+        patterns: ['vitest', '@vitest/*']
+      eslint:
+        patterns: ['eslint', '@eslint/*']
       production:
         dependency-type: production
         update-types: [minor, patch]
