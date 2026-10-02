@@ -135,7 +135,12 @@ export class TrelloClient {
       await fs.writeFile(CONFIG_FILE, JSON.stringify(configToSave, null, 2));
     } catch (error) {
       const reason = error instanceof Error ? error.message : String(error);
-      throw new Error(`Failed to save the active board and workspace to ${CONFIG_FILE}: ${reason}`);
+      throw new Error(
+        `Failed to save the active board and workspace to ${CONFIG_FILE}: ${reason}`,
+        {
+          cause: error,
+        }
+      );
     }
   }
 
