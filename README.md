@@ -26,7 +26,7 @@ edited:
 ![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
 ![MCP](https://img.shields.io/badge/MCP-server-000000?style=for-the-badge&logo=modelcontextprotocol&logoColor=white)
 ![Vitest](https://img.shields.io/badge/Vitest-6E9F18?style=for-the-badge&logo=vitest&logoColor=white)
-[![Licence](https://img.shields.io/github/license/brainquiver/trello-mcp?style=for-the-badge&color=blue&label=licence)](LICENSE)
+[![License](https://img.shields.io/github/license/brainquiver/trello-mcp?style=for-the-badge&color=blue&label=license)](LICENSE)
 
 This repository is a Model Context Protocol (MCP) server for Trello. An agent uses its 52 tools to read and change boards, lists, cards, checklists, comments, labels and attachments. The server runs on the user's machine and talks to the agent over standard input and output (stdio). It calls the Trello web API with the user's key and token. Every reply is written for an agent, which reads each word of it and pays for each word in context.
 
@@ -51,7 +51,7 @@ The server goes as far as one Trello account and the boards that the account can
 
 <br>
 
-![A Trello board for a made-up company, Real LTD, which an agent filled through this server: four lists of cards with coloured labels, due dates, checklists and a comment](docs/images/trello-mcp-board-wide.png)
+![A Trello board for a made-up company, Real LTD, which an agent filled through this server: four lists of cards with colored labels, due dates, checklists and a comment](docs/images/trello-mcp-board-wide.png)
 
 ## 1. Build and Run
 
