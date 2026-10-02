@@ -44,7 +44,7 @@
     "@typescript-eslint/parser": "^8.70.1",
     "@vitest/coverage-v8": "5.0.2",
     "dotenv": "^18.0.4",
-    "eslint": "^8.57.1",
+    "eslint": "^10.11.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.4",
     "prettier": "^3.9.9",
