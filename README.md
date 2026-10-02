@@ -1,7 +1,7 @@
 ---
 type: Repository Guide
 title: Trello MCP
-description: An MCP server that gives an agent 52 Trello tools, with trimmed replies, duplicate-safe batches, a workspace guard and a reason for every refusal.
+description: An MCP server that gives an agent Trello tools, with trimmed replies, duplicate-safe batches, a workspace guard and a reason for every refusal.
 status: stable
 tags: [mcp, trello, typescript]
 generated:
@@ -12,7 +12,7 @@ supervised:
   at: 2026-09-23T01:03:52Z
 edited:
   by: claude-code/opus-5.5
-  at: 2026-10-02T17:54:03Z
+  at: 2026-10-02T18:04:52Z
 ---
 
 # Trello MCP
