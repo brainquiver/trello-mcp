@@ -74,7 +74,7 @@ The server reads its settings from the environment when it starts. It reads no `
 | Setting | Need | Effect |
 | --- | --- | --- |
 | **`TRELLO_API_KEY`** | required | The API key of a Trello app, from `https://trello.com/power-ups/admin`, as `example.env` describes. |
-| **`TRELLO_TOKEN`** | required | The token of the same account, from the authorisation address in `example.env`. |
+| **`TRELLO_TOKEN`** | required | The token of the same account, from the authorization address in `example.env`. |
 | **`TRELLO_BOARD_ID`** | optional | The first active board, section 3. |
 | **`TRELLO_ALLOWED_WORKSPACES`** | optional | Workspace IDs, separated by commas. When set, the workspace guard of section 3 is on. |
 | **`TRELLO_ATTACH_ROOT`** | optional | The one folder that a `file://` attachment may come from. When it is empty, every local upload is refused. |

@@ -118,7 +118,7 @@ A label belongs to a board, and a card carries the labels of its own board.
 | Tool | Required | Optional | Result |
 | --- | --- | --- | --- |
 | **`get_board_labels`** | | `boardId`, `raw` | The labels of a board, with their IDs. |
-| **`create_label`** | `name` | `boardId`, `color` | A new label. `color` is `red`, `orange`, `yellow`, `green`, `blue`, `purple`, `pink`, `sky`, `lime`, `black`, or `null` to remove the colour. |
+| **`create_label`** | `name` | `boardId`, `color` | A new label. `color` is `red`, `orange`, `yellow`, `green`, `blue`, `purple`, `pink`, `sky`, `lime`, `black`, or `null` to remove the color. |
 | **`update_label`** | `labelId` | `name`, `color` | A renamed or recoloured label. |
 | **`delete_label`** | `labelId` | | A deleted label, removed from every card that carried it. |
 | **`add_label_to_card`** | `cardId`, `labelId` | | The card ID and the IDs of all its labels after the change, as `cardId` and `idLabels`. The other labels stay. |
