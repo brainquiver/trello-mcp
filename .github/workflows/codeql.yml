@@ -55,7 +55,9 @@ jobs:
           echo "Changed files:"; echo "$files"; echo "Code changed: $code"
 
   analyze:
-    name: Analyse (${{ matrix.language }})
+    # GitHub adds the matrix value to this name, as Analyze (actions). A name that holds the matrix
+    # expression shows that expression when the job is skipped.
+    name: Analyze
     needs: changes
     if: needs.changes.outputs.code == 'true'
     # Blacksmith for pushes to main and for pull requests, and GitHub for a Dependabot pull request,
