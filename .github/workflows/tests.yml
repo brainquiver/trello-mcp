@@ -52,7 +52,9 @@ jobs:
           echo "Changed files:"; echo "$files"; echo "Code changed: $code"
 
   unit:
-    name: Unit (Node ${{ matrix.node }})
+    # GitHub adds the matrix value to this name, as Unit (22). A name that holds the matrix
+    # expression shows that expression when the job is skipped.
+    name: Unit
     needs: changes
     if: needs.changes.outputs.code == 'true'
     # Blacksmith for pushes to main and for pull requests. A Dependabot pull request stays on
