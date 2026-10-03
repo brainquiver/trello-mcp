@@ -60,10 +60,10 @@ The design applies six of Saltzer and Schroeder's secure design principles.
 
 Each weakness with an entry in the Common Weakness Enumeration (CWE) carries its number.
 
-| Weakness | Defence | File |
+| Weakness | Defense | File |
 | --- | --- | --- |
 | **Path traversal, CWE-22** | The attach folder check resolves the real paths of the root and the file, then refuses a file whose path leaves the root. A symbolic link resolves first, so it cannot escape the root | `src/trello/attachments.ts` |
-| **Server-side request forgery, CWE-918** | Trello stores an attachment link, and the server never fetches it. As a second defence, the link must use `https://`, and the URL check refuses `localhost` and private addresses | `src/trello/url-validator.ts` |
+| **Server-side request forgery, CWE-918** | Trello stores an attachment link, and the server never fetches it. As a second defense, the link must use `https://`, and the URL check refuses `localhost` and private addresses | `src/trello/url-validator.ts` |
 | **Improper input validation, CWE-20** | Each of the 52 tools checks its inputs with a zod schema before its handler runs, and the client checks dates and description lengths | `src/tools/`, `src/trello/validation.ts` |
 | **Exposure of sensitive information, CWE-200** | An error reply carries only Trello's status code and message, so the token in the request never reaches the agent | `src/trello/errors.ts` |
 | **Uncontrolled resource consumption, CWE-400** | Each request stops after 30 seconds, a batch takes at most 50 cards, a download stops at 5 MB by default, and a rate limiter paces the calls | `src/trello/client.ts`, `src/trello/batch.ts` |
