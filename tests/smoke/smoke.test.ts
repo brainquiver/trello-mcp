@@ -611,7 +611,7 @@ describe.skipIf(!canRunSmoke)('Smoke Tests (Live Trello API)', () => {
       ]);
       const card = await client.callTool('add_card_to_list', {
         listId: testListId,
-        name: 'Labelled',
+        name: 'Labeled',
         labels: [keep.id],
       });
       createdCardIds.push(card.id);
