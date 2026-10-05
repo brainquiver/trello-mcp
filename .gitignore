@@ -27,7 +27,7 @@ coverage/
 .DS_Store
 ._*
 
-# Working documents at the root. Only the readme and the licence are ever committed.
+# Working documents at the root. Only the readme and the license are ever committed.
 /*.md
 !/README.md
 !/LICENSE.md
