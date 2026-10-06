@@ -57,7 +57,7 @@ The server goes as far as one Trello account and the boards that the account can
 
     npm ci                                 # the exact versions in package-lock.json
     npm run build                          # compiles src/ into build/
-    npm test                               # unit tests, and the smoke tests when .env names a test board
+    npm test                               # unit tests, and the smoke tests when .env.ci names a test board
     npm start                              # the server on stdio, with the settings of section 1.1
     npm run typecheck
     npm run lint                           # ESLint and Prettier, as package.json sets them
@@ -110,7 +110,7 @@ The two suites answer different questions, and they live apart.
 | Suite | Folder | Needs | Proves |
 | --- | --- | --- | --- |
 | **Unit** | `tests/unit/` | only `npm ci` | The code does what we think Trello expects. Every call goes to a mocked Trello. |
-| **Smoke** | `tests/smoke/` | `TRELLO_API_KEY`, `TRELLO_TOKEN` and `TRELLO_TEST_BOARD_ID` in `.env`, and the optional test settings of section 1.1 | Trello accepts the calls. The suite starts `build/index.js` and calls its tools over MCP. |
+| **Smoke** | `tests/smoke/` | `TRELLO_API_KEY`, `TRELLO_TOKEN` and `TRELLO_TEST_BOARD_ID` in `.env.ci`, and the optional test settings of section 1.1 | Trello accepts the calls. The suite starts `build/index.js` and calls its tools over MCP. |
 
 The smoke suite skips itself when one of its three settings is absent, and `npm test` then works without a Trello account. The suite starts the built server, so `npm test` and `npm run test:smoke` build first, while `npm run test:unit` runs against the source. A full smoke run took 96 seconds on 2026-09-30, and its search test can wait up to 5 minutes for Trello's search index.
 

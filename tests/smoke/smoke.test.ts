@@ -54,8 +54,8 @@ class McpTestClient {
   // away from the active board of the person who runs it.
   private readonly home = mkdtempSync(path.join(os.tmpdir(), 'trello-mcp-smoke-'));
 
-  // Settings from the .env of the person who runs the suite never reach the server. Only the
-  // ones a test gives in settings do.
+  // Settings from the environment of the person who runs the suite never reach the server.
+  // Only the ones a test gives in settings do.
   constructor(settings: Record<string, string> = {}) {
     this.server = spawn('node', [path.resolve('build/index.js')], {
       env: {
