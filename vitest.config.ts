@@ -1,8 +1,9 @@
 import { defineConfig } from 'vitest/config';
 import { config } from 'dotenv';
 
-// The smoke suite reads its Trello account from .env. Without one it skips itself.
-const dotenvResult = config();
+// The smoke suite reads the test account from .env.ci, so a personal .env never reaches the
+// test boards. Without the file the suite skips itself.
+const dotenvResult = config({ path: '.env.ci' });
 
 export default defineConfig({
   test: {
